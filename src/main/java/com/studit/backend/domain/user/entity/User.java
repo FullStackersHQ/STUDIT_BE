@@ -1,14 +1,11 @@
 package com.studit.backend.domain.user.entity;
 
-//import com.studit.backend.domain.study.StudyPartcpntMgnt;
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -28,7 +25,7 @@ public class User {
 
     @Id
     @Column(nullable = false, unique = true)
-    private long id;
+    private Long id;
 
 
     @Column(nullable = false, length = 100)
@@ -47,12 +44,12 @@ public class User {
     // 생성일시
     @CreationTimestamp
     @Column(nullable = false, updatable = false)  // 수정 불가
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     // 수정일시
     @UpdateTimestamp
     @Column(nullable = false)
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
 
 //    // 포인트로그(1:N)

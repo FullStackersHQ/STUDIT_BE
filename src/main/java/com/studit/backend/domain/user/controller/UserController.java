@@ -14,7 +14,7 @@ public class UserController {
 
     //유저 닉네임 수정
     @PostMapping
-    public void UserNickName(@RequestBody String userNickName ) {
+    public void updateNickName(@RequestBody String userNickName ) {
         userService.checkUserNickName(userNickName);
     }
 
