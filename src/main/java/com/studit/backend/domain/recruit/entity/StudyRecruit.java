@@ -22,7 +22,6 @@ public class StudyRecruit {
     @Column(name = "recruit_id")
     private Long id; // 모집 ID
 
-    // TODO: User 엔티티가 만들어져야함
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id")
     private User leader; // 모집자 ID (스터디장)

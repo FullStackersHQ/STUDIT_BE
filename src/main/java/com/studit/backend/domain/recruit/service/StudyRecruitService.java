@@ -7,6 +7,7 @@ import com.studit.backend.domain.recruit.dto.StudyRecruitResponse;
 import com.studit.backend.domain.recruit.entity.StudyRecruit;
 import com.studit.backend.domain.recruit.repository.StudyRecruitRepository;
 import com.studit.backend.domain.recruit.repository.StudyRegisterRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,16 +23,14 @@ public class StudyRecruitService {
     private final StudyRecruitRepository studyRecruitRepository;
     private final StudyRegisterRepository studyRegisterRepository;
 
-    // 스터디 모집 생성
+    // 스터디 모집글 생성
     @Transactional
     public Long createRecruit(StudyRecruitRequest.Create request, Long leaderId) {
 
-        // TODO: User 엔티티가 만들어져야함
         // 모집자 정보 가져오기
         User leader = userRepository.findById(leaderId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        // TODO: User 엔티티 필드에 point 가 추가 되어야함
         // 모집자가 가진 포인트가 예치금보다 적으면 예외 발생
         if (leader.getPoint() < request.getDeposit()) {
             throw new IllegalArgumentException("포인트가 부족합니다.");
@@ -52,22 +51,15 @@ public class StudyRecruitService {
                 .recruitEndAt(request.getRecruitEndAt())
                 .build();
 
-        // TODO: User 엔티티에 해당 메서드 추가
-        // public void deductPoint(Integer deposit) {
-        //    if (this.point < deposit) {
-        //        throw new IllegalArgumentException("포인트가 부족합니다.");
-        //    }
-        //    this.point -= deposit;
-        //}
         // 모집자의 포인트 차감
-        leader.deductPoint(request.getDeposit());
+        leader.getPoint() -= request.getDeposit();
 
-        return this.studyRecruitRepository.save(studyRecruit).getId();
+        return studyRecruitRepository.save(studyRecruit).getId();
     }
 
-    // 스터디 모집 목록 조회
+    // 스터디 모집글 목록 조회
     public Page<StudyRecruitResponse.Summary> getAllRecruits(Pageable pageable) {
-        Page<StudyRecruit> recruits = this.studyRecruitRepository.findByStatusOrderByCreatedAtDesc(RecruitStatus.ACTIVE, pageable);
+        Page<StudyRecruit> recruits = studyRecruitRepository.findByStatusOrderByCreatedAtDesc(RecruitStatus.ACTIVE, pageable);
 
         return recruits.map(studyRecruit -> StudyRecruitResponse.Summary.builder()
                 .recruitId(studyRecruit.getId())
@@ -79,13 +71,13 @@ public class StudyRecruitService {
                 .studyStartAt(studyRecruit.getStudyStartAt())
                 .studyEndAt(studyRecruit.getStudyEndAt())
                 .recruitEndAt(studyRecruit.getRecruitEndAt())
-                .currentMembers(this.studyRegisterRepository.countByRecruitIdAndStatus(studyRecruit.getId(), RegisterStatus.REGISTER))
+                .currentMembers(studyRegisterRepository.countByRecruitIdAndStatus(studyRecruit.getId(), RegisterStatus.REGISTER))
                 .maxMembers(studyRecruit.getMaxMembers())
                 .status(studyRecruit.getStatus().name())
                 .build());
     }
 
-    // 스터디 모집 목록 조회 (검색, 필터링 적용)
+    // 스터디 모집글 목록 조회 (검색, 필터링 적용)
     public Page<StudyRecruitResponse.Summary> getSearchRecruits(StudyRecruitRequest.Search request) {
         if (request.getMaxDeposit() < request.getMinDeposit()) {
             throw new IllegalArgumentException("최대 예치금은 최소 예치금보다 커야 합니다.");
@@ -94,5 +86,49 @@ public class StudyRecruitService {
         if (request.getMaxGoalTime() < request.getMinGoalTime()) {
             throw new IllegalArgumentException("최대 목표 시간은 최소 목표 시간보다 커야 합니다.");
         }
+    }
+
+    // 스터디 모집글 상세 조회
+    public StudyRecruitResponse.Detail getDetailRecruit(Long recruitId) {
+        StudyRecruit studyRecruit = studyRecruitRepository.findById(recruitId)
+                .orElseThrow((() -> new EntityNotFoundException("Recruit not found")));
+
+        return StudyRecruitResponse.Detail.builder()
+                .recruitId(studyRecruit.getId())
+                .leaderId()
+                .leaderNickname()
+                .title()
+                .description()
+                .category()
+                .tags()
+                .goalTime()
+                .deposit()
+                .studyStartAt()
+                .studyEndAt()
+                .recruitEndAt()
+                .currentMembers()
+                .maxMembers()
+                .status()
+                .build();
+    }
+
+    // 스터디 모집글 수정
+    public Long updateRecruit() {
+        return null;
+    }
+
+    // 스터디 모집글 삭제
+    public Long deleteRecruit() {
+        return null;
+    }
+
+    // 스터디 가입
+    public Long studyRegister() {
+        return null;
+    }
+
+    // 스터디 가입 철회
+    public Long withdrawRegister() {
+        return null;
     }
 }
