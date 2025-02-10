@@ -1,12 +1,12 @@
-package com.studit.backend.recruit.service;
+package com.studit.backend.domain.recruit.service;
 
-import com.studit.backend.recruit.RecruitStatus;
-import com.studit.backend.recruit.RegisterStatus;
-import com.studit.backend.recruit.dto.StudyRecruitRequest;
-import com.studit.backend.recruit.dto.StudyRecruitResponse;
-import com.studit.backend.recruit.entity.StudyRecruit;
-import com.studit.backend.recruit.repository.StudyRecruitRepository;
-import com.studit.backend.recruit.repository.StudyRegisterRepository;
+import com.studit.backend.domain.recruit.RecruitStatus;
+import com.studit.backend.domain.recruit.RegisterStatus;
+import com.studit.backend.domain.recruit.dto.StudyRecruitRequest;
+import com.studit.backend.domain.recruit.dto.StudyRecruitResponse;
+import com.studit.backend.domain.recruit.entity.StudyRecruit;
+import com.studit.backend.domain.recruit.repository.StudyRecruitRepository;
+import com.studit.backend.domain.recruit.repository.StudyRegisterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

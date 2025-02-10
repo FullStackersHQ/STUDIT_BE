@@ -1,7 +1,7 @@
-package com.studit.backend.recruit.dto;
+package com.studit.backend.domain.recruit.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.studit.backend.recruit.StudyCategory;
+import com.studit.backend.domain.recruit.StudyCategory;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.studit.backend.recruit.dto;
+package com.studit.backend.domain.recruit.dto;
 
 import lombok.Builder;
 import lombok.Data;

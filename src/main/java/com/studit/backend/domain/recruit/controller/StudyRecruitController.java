@@ -1,8 +1,8 @@
-package com.studit.backend.recruit.controller;
+package com.studit.backend.domain.recruit.controller;
 
-import com.studit.backend.recruit.dto.StudyRecruitRequest;
-import com.studit.backend.recruit.dto.StudyRecruitResponse;
-import com.studit.backend.recruit.service.StudyRecruitService;
+import com.studit.backend.domain.recruit.dto.StudyRecruitRequest;
+import com.studit.backend.domain.recruit.dto.StudyRecruitResponse;
+import com.studit.backend.domain.recruit.service.StudyRecruitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

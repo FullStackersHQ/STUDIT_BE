@@ -1,4 +1,4 @@
-package com.studit.backend.recruit;
+package com.studit.backend.domain.recruit;
 
 public enum RecruitStatus {
     ACTIVE, // 모집중

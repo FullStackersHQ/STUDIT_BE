@@ -1,7 +1,7 @@
-package com.studit.backend.recruit.repository;
+package com.studit.backend.domain.recruit.repository;
 
-import com.studit.backend.recruit.RecruitStatus;
-import com.studit.backend.recruit.entity.StudyRecruit;
+import com.studit.backend.domain.recruit.RecruitStatus;
+import com.studit.backend.domain.recruit.entity.StudyRecruit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
-package com.studit.backend.recruit.repository;
+package com.studit.backend.domain.recruit.repository;
 
-import com.studit.backend.recruit.RegisterStatus;
-import com.studit.backend.recruit.entity.StudyRegister;
+import com.studit.backend.domain.recruit.RegisterStatus;
+import com.studit.backend.domain.recruit.entity.StudyRegister;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
