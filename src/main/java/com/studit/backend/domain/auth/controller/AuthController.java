@@ -6,6 +6,8 @@ import com.studit.backend.domain.user.repository.UserRepository;
 import com.studit.backend.global.security.JwtTokenProvider;
 import com.studit.backend.domain.oauth.kakao.KakaoService;
 import com.studit.backend.domain.oauth.kakao.KakaoTokenService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,14 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import jakarta.servlet.http.Cookie;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -115,7 +125,7 @@ public class AuthController {
      * @return
      */
     @GetMapping("/kakao-logout")
-    public ResponseEntity<String> kakaoLogout() {
+    public ResponseEntity<String> kakaoLogout(HttpServletRequest request, HttpServletResponse response) {
         String logoutUrl = "https://kauth.kakao.com/oauth/logout" +
                 "?client_id=" + clientId +
                 "&logout_redirect_uri=" + logoutRedirectUri;
@@ -129,10 +139,9 @@ public class AuthController {
 
         // RestTemplate을 이용해 GET 요청 보내기
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(logoutUrl, HttpMethod.GET, entity, String.class);
-
-
-        return ResponseEntity.status(response.getStatusCode()).body("카카오 로그아웃 완료");
+        ResponseEntity<String> restResponse = restTemplate.exchange(logoutUrl, HttpMethod.GET, entity, String.class);
+        
+        return ResponseEntity.status(restResponse.getStatusCode()).body("카카오 로그아웃 완료");
     }
 
     String accessToken;

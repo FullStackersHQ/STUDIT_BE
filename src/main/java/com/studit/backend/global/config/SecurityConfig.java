@@ -32,6 +32,9 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .logoutSuccessUrl("/auth/kakao-logout")
+                        .invalidateHttpSession(true)  // 세션을 무효화
+                        .clearAuthentication(true)  // 인증 정보 제거
+                        .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((request, response, authentication) -> {
@@ -40,9 +43,6 @@ public class SecurityConfig {
                         .failureHandler((request, response, exception) -> {
                             response.sendRedirect("/login-fail");  // 로그인 실패 시 리디렉션
                         })
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
         return http.build();
     }
