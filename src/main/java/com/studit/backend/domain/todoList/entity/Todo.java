@@ -17,7 +17,7 @@ public class Todo {
     private Long todoId;
 
     @Column(name = "todo_name", nullable = false)
-    private String todoName ;
+    private String todoName;
 
     // 총 사용시간 컬럼 (초 단위로 저장)
     @Column(name = "total_study_time", nullable = false)
@@ -34,7 +34,7 @@ public class Todo {
     @Enumerated(EnumType.STRING)
     @Column(name = "end_yn", nullable = false, length = 1)
     @ColumnDefault("'N'")
-    private TodoEndType endYN;
+    private TodoEndType endYN = TodoEndType.N;
 
 
 
