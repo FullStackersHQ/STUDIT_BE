@@ -2,6 +2,7 @@ package com.studit.backend.domain.recruit.entity;
 
 import com.studit.backend.domain.recruit.RecruitStatus;
 import com.studit.backend.domain.recruit.StudyCategory;
+import com.studit.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

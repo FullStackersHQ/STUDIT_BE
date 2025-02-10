@@ -7,6 +7,8 @@ import com.studit.backend.domain.recruit.dto.StudyRecruitResponse;
 import com.studit.backend.domain.recruit.entity.StudyRecruit;
 import com.studit.backend.domain.recruit.repository.StudyRecruitRepository;
 import com.studit.backend.domain.recruit.repository.StudyRegisterRepository;
+import com.studit.backend.domain.user.entity.User;
+import com.studit.backend.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ public class StudyRecruitService {
 
     private final StudyRecruitRepository studyRecruitRepository;
     private final StudyRegisterRepository studyRegisterRepository;
+    private final UserRepository userRepository;
 
     // 스터디 모집글 생성
     @Transactional
@@ -35,6 +38,9 @@ public class StudyRecruitService {
         if (leader.getPoint() < request.getDeposit()) {
             throw new IllegalArgumentException("포인트가 부족합니다.");
         }
+
+        // 모집자의 포인트 차감
+        leader.deductPoint(request.getDeposit());
 
         // 모집글 생성
         StudyRecruit studyRecruit = StudyRecruit.builder()
@@ -50,9 +56,6 @@ public class StudyRecruitService {
                 .studyEndAt(request.getStudyEndAt())
                 .recruitEndAt(request.getRecruitEndAt())
                 .build();
-
-        // 모집자의 포인트 차감
-        leader.getPoint() -= request.getDeposit();
 
         return studyRecruitRepository.save(studyRecruit).getId();
     }
@@ -77,6 +80,7 @@ public class StudyRecruitService {
                 .build());
     }
 
+    // TODO
     // 스터디 모집글 목록 조회 (검색, 필터링 적용)
     public Page<StudyRecruitResponse.Summary> getSearchRecruits(StudyRecruitRequest.Search request) {
         if (request.getMaxDeposit() < request.getMinDeposit()) {
@@ -95,20 +99,20 @@ public class StudyRecruitService {
 
         return StudyRecruitResponse.Detail.builder()
                 .recruitId(studyRecruit.getId())
-                .leaderId()
-                .leaderNickname()
-                .title()
-                .description()
-                .category()
-                .tags()
-                .goalTime()
-                .deposit()
-                .studyStartAt()
-                .studyEndAt()
-                .recruitEndAt()
-                .currentMembers()
-                .maxMembers()
-                .status()
+                .leaderId(studyRecruit.getLeader().getId())
+                .leaderNickname(studyRecruit.getLeader().getNickname())
+                .title(studyRecruit.getTitle())
+                .description(studyRecruit.getDescription())
+                .category(studyRecruit.getCategory().name())
+                .tags(Arrays.asList(studyRecruit.getTags().split(",")))
+                .goalTime(studyRecruit.getGoalTime())
+                .deposit(studyRecruit.getDeposit())
+                .studyStartAt(studyRecruit.getStudyStartAt())
+                .studyEndAt(studyRecruit.getStudyEndAt())
+                .recruitEndAt(studyRecruit.getRecruitEndAt())
+                .currentMembers(studyRegisterRepository.countByRecruitIdAndStatus(studyRecruit.getId(), RegisterStatus.REGISTER))
+                .maxMembers(studyRecruit.getMaxMembers())
+                .status(studyRecruit.getStatus().name())
                 .build();
     }
 

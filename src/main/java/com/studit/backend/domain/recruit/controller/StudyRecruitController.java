@@ -23,7 +23,6 @@ public class StudyRecruitController {
     @PostMapping
     public ResponseEntity<?> createRecruit(@Validated @RequestBody StudyRecruitRequest.Create request,
                                            @RequestParam Long leaderId) {
-
         return ResponseEntity.ok(studyRecruitService.createRecruit(request, leaderId));
     }
 
@@ -40,6 +39,7 @@ public class StudyRecruitController {
         return ResponseEntity.ok(recruits);
     }
 
+    // TODO
     // 스터디 모집글 목록 조회 (검색, 필터링 적용)
     @GetMapping
     public ResponseEntity<?> getSearchRecruits() {
@@ -50,8 +50,9 @@ public class StudyRecruitController {
     // 스터디 모집글 상세 조회
     @GetMapping("/{recruitId}")
     public ResponseEntity<?> getDetailRecruit(@PathVariable Long recruitId) {
+        StudyRecruitResponse.Detail recruit = studyRecruitService.getDetailRecruit(recruitId);
 
-        return null;
+        return ResponseEntity.ok(recruit);
     }
 
     // TODO: 제목, 설명, 카테고리, 태그, 최대 인원수 수정 가능
