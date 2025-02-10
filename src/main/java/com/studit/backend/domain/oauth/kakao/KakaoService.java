@@ -1,4 +1,5 @@
 package com.studit.backend.domain.oauth.kakao;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -6,7 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import com.studit.backend.domain.user.entity.kakaoUser;
+import com.studit.backend.domain.user.entity.KakaoUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -16,16 +17,16 @@ public class KakaoService {
     private final RestTemplate restTemplate;
 
 
-    public kakaoUser getUserInfo(String accessToken) {
+    public KakaoUser getUserInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<kakaoUser> response = restTemplate.exchange(
+        ResponseEntity<KakaoUser> response = restTemplate.exchange(
                 "https://kapi.kakao.com/v2/user/me",
                 HttpMethod.GET,
                 entity,
-                kakaoUser.class
+                KakaoUser.class
         );
 
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,4 +1,5 @@
 package com.studit.backend.domain.user.entity;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,10 +9,9 @@ import lombok.ToString;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class kakaoUser {
+public class KakaoUser {
     private Long id;
     private KakaoAccount kakao_account;
-
 
 
     @Getter

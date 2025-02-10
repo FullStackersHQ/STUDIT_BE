@@ -1,12 +1,23 @@
 package com.studit.backend.domain.user.controller;
 
+
+import com.studit.backend.domain.user.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
+    private final UserService userService;
 
-    // 닉네임과 조회했을때 다른 전체 유저중에 중복있을때 ->클라이언트쪽에서 메세지보고 문구띄우게
-//        if(userRepository.findByNickname(kakaoUser.getKakao_account().getProfile().getNickname()).size()>0) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "유저 닉네임이 중복됩니다.");
-//        }
+    //유저 닉네임 수정
+    @PostMapping
+    public void UserNickName(@RequestBody String userNickName ) {
+        userService.checkUserNickName(userNickName);
+    }
+
 
 }
 
