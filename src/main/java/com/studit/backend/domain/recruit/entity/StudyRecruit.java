@@ -51,6 +51,7 @@ public class StudyRecruit {
 
     private LocalDateTime recruitEndAt; // 모집 종료일
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private RecruitStatus status = RecruitStatus.ACTIVE; // 모집 상태 (ACTIVE, DELETED, COMPLETED 등)
 

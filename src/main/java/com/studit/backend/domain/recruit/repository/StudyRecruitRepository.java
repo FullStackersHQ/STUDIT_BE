@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudyRecruitRepository extends JpaRepository<StudyRecruit, Long> {
-    Page<StudyRecruit> findByStatusOrderByCreatedAtDesc(RecruitStatus status, Pageable pageable);
+    Page<StudyRecruit> findByStatusOrderByRecruitStartAtDesc(RecruitStatus status, Pageable pageable);
 }

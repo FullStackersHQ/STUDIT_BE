@@ -29,6 +29,7 @@ public class StudyRegister {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private RegisterStatus status = RegisterStatus.REGISTER;
 

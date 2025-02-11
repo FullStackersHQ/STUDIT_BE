@@ -62,7 +62,7 @@ public class StudyRecruitService {
 
     // 스터디 모집글 목록 조회
     public Page<StudyRecruitResponse.Summary> getAllRecruits(Pageable pageable) {
-        Page<StudyRecruit> recruits = studyRecruitRepository.findByStatusOrderByCreatedAtDesc(RecruitStatus.ACTIVE, pageable);
+        Page<StudyRecruit> recruits = studyRecruitRepository.findByStatusOrderByRecruitStartAtDesc(RecruitStatus.ACTIVE, pageable);
 
         return recruits.map(studyRecruit -> StudyRecruitResponse.Summary.builder()
                 .recruitId(studyRecruit.getId())
@@ -74,7 +74,7 @@ public class StudyRecruitService {
                 .studyStartAt(studyRecruit.getStudyStartAt())
                 .studyEndAt(studyRecruit.getStudyEndAt())
                 .recruitEndAt(studyRecruit.getRecruitEndAt())
-                .currentMembers(studyRegisterRepository.countByRecruitIdAndStatus(studyRecruit.getId(), RegisterStatus.REGISTER))
+                .currentMembers(studyRegisterRepository.countByStudyRecruitAndStatus(studyRecruit, RegisterStatus.REGISTER))
                 .maxMembers(studyRecruit.getMaxMembers())
                 .status(studyRecruit.getStatus().name())
                 .build());
@@ -90,6 +90,8 @@ public class StudyRecruitService {
         if (request.getMaxGoalTime() < request.getMinGoalTime()) {
             throw new IllegalArgumentException("최대 목표 시간은 최소 목표 시간보다 커야 합니다.");
         }
+
+        return null;
     }
 
     // 스터디 모집글 상세 조회
@@ -110,7 +112,7 @@ public class StudyRecruitService {
                 .studyStartAt(studyRecruit.getStudyStartAt())
                 .studyEndAt(studyRecruit.getStudyEndAt())
                 .recruitEndAt(studyRecruit.getRecruitEndAt())
-                .currentMembers(studyRegisterRepository.countByRecruitIdAndStatus(studyRecruit.getId(), RegisterStatus.REGISTER))
+                .currentMembers(studyRegisterRepository.countByStudyRecruitAndStatus(studyRecruit, RegisterStatus.REGISTER))
                 .maxMembers(studyRecruit.getMaxMembers())
                 .status(studyRecruit.getStatus().name())
                 .build();
