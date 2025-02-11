@@ -25,6 +25,13 @@ public class PointLogController {//포인트 로그
         List<PointLog> pointLog=pointLogService.getAll();
         pointLog.forEach(System.out::println);return pointLog;}
 
+    @GetMapping("/getEach") public List<PointLog> getEach(@RequestParam(required = false) Boolean charge2,
+    @RequestParam(required = false) Boolean withdraw2, @RequestParam(required = false) Boolean refund2,
+    @RequestParam(required = false) Boolean deduct2){//기능에 해당되는 해당 포인트 로그들 조회
+
+        List<PointLog> pointLogs=pointLogService.getEach(charge2,withdraw2,refund2,deduct2);
+        pointLogs.forEach(System.out::println);return pointLogs;}
+
     @PutMapping("/charge/{pointLogId}")//충전
     public ResponseEntity<?> charge(@PathVariable Long pointLogId,
                                     @RequestBody PointLogRequest pointLogRequest) {
@@ -43,14 +50,12 @@ public class PointLogController {//포인트 로그
     public ResponseEntity<?> refund(@PathVariable Long pointLogId,
                                     @RequestBody PointLogRequest pointLogRequest) {
         PointLog pointLog = pointLogService.refund(pointLogId, pointLogRequest);
-        pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()-pointLogRequest.getWithdraw());
+        pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()+pointLogRequest.getRefund());
         return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);}
 
     @PutMapping("/deduct/{pointLogId}")//차감
     public ResponseEntity<?> deduct(@PathVariable Long pointLogId,
                                     @RequestBody PointLogRequest pointLogRequest) {
         PointLog pointLog = pointLogService.deduct(pointLogId, pointLogRequest);
-        pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()-pointLogRequest.getWithdraw());
+        pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()-pointLogRequest.getDeduct());
         return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);}}
-
-//if(pointLogRequest.getPointLogType().equals("CHARGE"))
