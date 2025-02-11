@@ -16,7 +16,7 @@ public class PointLogController {//포인트 로그
         PointLog pointLog = pointLogService.createPointLog(pointLogRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);}
 
-    @GetMapping("/get/{pointLogId}")//포인트 로그 2조회
+    @GetMapping("/get/{pointLogId}")//포인트 로그 조회
     public ResponseEntity<PointLog>getPointLog(@PathVariable Long pointLogId){
         PointLog pointLog=pointLogService.getPointLog(pointLogId);
         return ResponseEntity.ok(pointLog);}
@@ -25,11 +25,11 @@ public class PointLogController {//포인트 로그
         List<PointLog> pointLog=pointLogService.getAll();
         pointLog.forEach(System.out::println);return pointLog;}
 
-    @GetMapping("/getEach") public List<PointLog> getEach(@RequestParam(required = false) Boolean charge2,
-    @RequestParam(required = false) Boolean withdraw2, @RequestParam(required = false) Boolean refund2,
-    @RequestParam(required = false) Boolean deduct2){//기능에 해당되는 해당 포인트 로그들 조회
+    @GetMapping("/getEach") public List<PointLog> getEach(@RequestParam(required = false) Boolean charge,
+    @RequestParam(required = false) Boolean withdraw, @RequestParam(required = false) Boolean refund,
+    @RequestParam(required = false) Boolean deduct){//기능에 해당되는 해당 포인트 로그들 조회
 
-        List<PointLog> pointLogs=pointLogService.getEach(charge2,withdraw2,refund2,deduct2);
+        List<PointLog> pointLogs=pointLogService.getEach(charge ,withdraw, refund, deduct);
         pointLogs.forEach(System.out::println);return pointLogs;}
 
     @PutMapping("/charge/{pointLogId}")//충전

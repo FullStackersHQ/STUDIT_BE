@@ -19,28 +19,13 @@ public class PointLogService {//포인트 로그
 
     public List<PointLog> getAll() {return pointLogRepository.findAll();}
 
-    public List<PointLog> getEach(Boolean charge2, Boolean withdraw2,
-                                  Boolean refund2, Boolean deduct2) {//기능에 해당되는 해당 포인트 로그들 조회
-        //모든 로그들로 시작
-        List<PointLog> pointLogs=pointLogRepository.findAll();
-
-        //조건을 통과하는 해당 로그들
-        //충전
-        if(charge2!=null&&charge2){pointLogs=pointLogs.stream()
-                .filter(log->log.getCharge()>0).collect(Collectors.toList());}
-
-        //출금
-        if(withdraw2!=null&&withdraw2){pointLogs=pointLogs.stream()
-                .filter(log->log.getWithdraw()>0).collect(Collectors.toList());}
-
-        //환불
-        if(refund2!=null&&refund2){pointLogs=pointLogs.stream()
-                .filter(log->log.getRefund()>0).collect(Collectors.toList());}
-
-        //차감
-        if(deduct2!=null&&deduct2){pointLogs=pointLogs.stream()
-                .filter(log->log.getCharge()>0).collect(Collectors.toList());}
-        return pointLogs;}
+    public List<PointLog> getEach(Boolean charge, Boolean withdraw,
+                                  Boolean refund, Boolean deduct) {//기능에 해당되는 해당 포인트 로그들 조회
+        if(charge!=null&&charge){return pointLogRepository.findByCharge();}//충전
+        if(withdraw!=null&&withdraw){return pointLogRepository.findByWithdraw();}//출금
+        if(refund!=null&&refund){return pointLogRepository.findByRefund();}//환불
+        if(deduct!=null&&deduct){return pointLogRepository.findByDeduct();}//차감
+        return pointLogRepository.findAll();}//없을 시 모든 결과 조회
 
     public PointLog charge(Long pointLogId,PointLogRequest pointLogRequest) {//충전
         PointLog saved=pointLogRepository.findById(pointLogId)
