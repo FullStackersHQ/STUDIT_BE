@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final KakaoUser kakaoUser;
+    private KakaoUser kakaoUser;
 
     public void checkUserNickName(String userNickName) {
 
