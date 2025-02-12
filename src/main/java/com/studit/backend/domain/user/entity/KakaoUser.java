@@ -15,21 +15,16 @@ public class KakaoUser {
     private Long id;
     private KakaoAccount kakao_account;
 
-
     @Getter
     @Setter
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class KakaoAccount {
         private String email;
-        private Profile profile;
-    }
-
+        private Profile profile;}
 
     @Getter
     @Setter
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Profile {
         private String nickname;
-        private String profile_image_url;
-    }
-}
+        private String profile_image_url;}}
