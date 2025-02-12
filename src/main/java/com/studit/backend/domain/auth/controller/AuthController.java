@@ -139,10 +139,10 @@ public class AuthController {
 
         // RestTemplate을 이용해 GET 요청 보내기
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> restResponse = restTemplate.exchange(logoutUrl, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> restResponse = restTemplate.exchange
+                (logoutUrl, HttpMethod.GET, entity, String.class);
 
-        return ResponseEntity.status(restResponse.getStatusCode()).body("카카오 로그아웃 완료");
-    }
+return ResponseEntity.status(restResponse.getStatusCode()).body("카카오 로그아웃 완료");}
 
     String accessToken;
 
@@ -175,7 +175,8 @@ public class AuthController {
 
      // RestTemplate을 이용해 GET 요청 보내기
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(unlinkUrl, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange
+        (unlinkUrl, HttpMethod.GET, entity, String.class);
 
         // 로그아웃 완료 메시지 반환
         return ResponseEntity.status(response.getStatusCode()).body("카카오 로그아웃 완료");
@@ -188,7 +189,8 @@ public class AuthController {
   /*  @PostMapping("/kakao-logout")
     public ResponseEntity<String> kakaoLogout() {
 
-        //public ResponseEntity<String> kakaoLogout(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        //public ResponseEntity<String> kakaoLogout
+        (@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
 
         // Authorization 헤더에서 "Bearer "를 제외한 토큰 값만 추출

@@ -21,7 +21,4 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 new OAuth2AuthenticationToken(oauth2User, oauth2User.getAuthorities(), registrationId);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return oauth2User;
-    }
-}
+        return oauth2User;}}

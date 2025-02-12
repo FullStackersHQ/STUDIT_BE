@@ -60,7 +60,4 @@ public class User {
     public User(Long id, String nickname, String profileImageUrl) {
         this.id = id;
         this.nickname = nickname;
-        this.profileImage = profileImageUrl;
-    }
-
-}
+        this.profileImage = profileImageUrl;}}
