@@ -43,25 +43,4 @@ public class StudyRecruitRequest {
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH")
         private LocalDateTime recruitEndAt;
     }
-
-    @Data
-    public static class Search {
-        private String title;
-
-        private List<String> tags;
-
-        private StudyCategory category;
-
-        @Min(value = 0, message = "예치금은 0 이상이어야 합니다.")
-        private int minDeposit;
-
-        @Min(value = 0, message = "예치금은 0 이상이어야 합니다.")
-        private int maxDeposit;
-
-        @Min(value = 0, message = "목표 시간은 0 이상이어야 합니다.")
-        private int minGoalTime;
-
-        @Min(value = 0, message = "목표 시간은 0 이상이어야 합니다.")
-        private int maxGoalTime;
-    }
 }

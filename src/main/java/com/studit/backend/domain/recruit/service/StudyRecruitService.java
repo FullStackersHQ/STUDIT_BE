@@ -2,6 +2,7 @@ package com.studit.backend.domain.recruit.service;
 
 import com.studit.backend.domain.recruit.RecruitStatus;
 import com.studit.backend.domain.recruit.RegisterStatus;
+import com.studit.backend.domain.recruit.StudyCategory;
 import com.studit.backend.domain.recruit.dto.StudyRecruitRequest;
 import com.studit.backend.domain.recruit.dto.StudyRecruitResponse;
 import com.studit.backend.domain.recruit.entity.StudyRecruit;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -80,18 +82,36 @@ public class StudyRecruitService {
                 .build());
     }
 
-    // TODO
     // 스터디 모집글 목록 조회 (검색, 필터링 적용)
-    public Page<StudyRecruitResponse.Summary> getSearchRecruits(StudyRecruitRequest.Search request) {
-        if (request.getMaxDeposit() < request.getMinDeposit()) {
-            throw new IllegalArgumentException("최대 예치금은 최소 예치금보다 커야 합니다.");
-        }
+    public Page<StudyRecruitResponse.Summary> getSearchRecruits(
+            String title, List<String> tags, StudyCategory category,
+            Integer minDeposit, Integer maxDeposit, Integer minGoalTime, Integer maxGoalTime,
+            Pageable pageable
+    ) {
+        // null 값 방지
+        int minDepositValue = (minDeposit != null) ? minDeposit : 0;
+        int maxDepositValue = (maxDeposit != null) ? maxDeposit : Integer.MAX_VALUE;
+        int minGoalTimeValue = (minGoalTime != null) ? minGoalTime : 0;
+        int maxGoalTimeValue = (maxGoalTime != null) ? maxGoalTime : Integer.MAX_VALUE;
+        // List<String> → String 변환 (쉼표로 구분)
+        String tagsValue = (tags != null && !tags.isEmpty()) ? String.join(",", tags) : null;
 
-        if (request.getMaxGoalTime() < request.getMinGoalTime()) {
-            throw new IllegalArgumentException("최대 목표 시간은 최소 목표 시간보다 커야 합니다.");
-        }
+        Page<StudyRecruit> searchRecruits = studyRecruitRepository.findByFilters(title, tagsValue, category, minDepositValue, maxDepositValue, minGoalTimeValue, maxGoalTimeValue, pageable);
 
-        return null;
+        return searchRecruits.map(studyRecruit -> StudyRecruitResponse.Summary.builder()
+                .recruitId(studyRecruit.getId())
+                .title(studyRecruit.getTitle())
+                .category(studyRecruit.getCategory().name())
+                .tags(Arrays.asList(studyRecruit.getTags().split(",")))
+                .goalTime(studyRecruit.getGoalTime())
+                .deposit(studyRecruit.getDeposit())
+                .studyStartAt(studyRecruit.getStudyStartAt())
+                .studyEndAt(studyRecruit.getStudyEndAt())
+                .recruitEndAt(studyRecruit.getRecruitEndAt())
+                .currentMembers(studyRegisterRepository.countByStudyRecruitAndStatus(studyRecruit, RegisterStatus.REGISTER))
+                .maxMembers(studyRecruit.getMaxMembers())
+                .status(studyRecruit.getStatus().name())
+                .build());
     }
 
     // 스터디 모집글 상세 조회

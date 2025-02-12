@@ -1,5 +1,6 @@
 package com.studit.backend.global.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -32,6 +33,21 @@ public class JwtTokenProvider {
                 .setExpiration(expiryDate)
                 .signWith(Keys.hmacShaKeyFor(key), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    // JWT 에서 userId 추출
+    public Long getUserIdFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return Long.valueOf(claims.getSubject());
+    }
+
+    // JWT 에서 Claims(페이로드) 추출
+    private Claims getClaimsFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(key))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
 }

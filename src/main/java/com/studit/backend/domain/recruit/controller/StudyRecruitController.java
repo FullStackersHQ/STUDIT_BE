@@ -1,8 +1,10 @@
 package com.studit.backend.domain.recruit.controller;
 
+import com.studit.backend.domain.recruit.StudyCategory;
 import com.studit.backend.domain.recruit.dto.StudyRecruitRequest;
 import com.studit.backend.domain.recruit.dto.StudyRecruitResponse;
 import com.studit.backend.domain.recruit.service.StudyRecruitService;
+import com.studit.backend.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,18 +13,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/recruits")
 public class StudyRecruitController {
 
     private final StudyRecruitService studyRecruitService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    // TODO: leaderId는 토큰에서 추출
     // 스터디 모집글 생성
     @PostMapping
-    public ResponseEntity<?> createRecruit(@Validated @RequestBody StudyRecruitRequest.Create request,
-                                           @RequestParam Long leaderId) {
+    public ResponseEntity<?> createRecruit(
+            @RequestHeader("Authorization") String token,
+            @Validated @RequestBody StudyRecruitRequest.Create request
+    ) {
+        // JWT 에서 userId 추출
+        Long leaderId = jwtTokenProvider.getUserIdFromToken(token);
+
         return ResponseEntity.ok(studyRecruitService.createRecruit(request, leaderId));
     }
 
@@ -39,12 +48,27 @@ public class StudyRecruitController {
         return ResponseEntity.ok(recruits);
     }
 
-    // TODO
     // 스터디 모집글 목록 조회 (검색, 필터링 적용)
-    @GetMapping
-    public ResponseEntity<?> getSearchRecruits() {
+    @GetMapping("/search")
+    public ResponseEntity<?> getSearchRecruits(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false) StudyCategory category,
+            @RequestParam(required = false) Integer minDeposit,
+            @RequestParam(required = false) Integer maxDeposit,
+            @RequestParam(required = false) Integer minGoalTime,
+            @RequestParam(required = false) Integer maxGoalTime,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        // 한 페이지당 5개
+        int pageSize = 5;
 
-        return null;
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<StudyRecruitResponse.Summary> searchRecruits = studyRecruitService.getSearchRecruits(
+                title, tags, category, minDeposit, maxDeposit, minGoalTime, maxGoalTime, pageable);
+
+        return ResponseEntity.ok(searchRecruits);
     }
 
     // 스터디 모집글 상세 조회
