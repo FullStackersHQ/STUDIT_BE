@@ -12,7 +12,7 @@ import org.springframework.util.MultiValueMap;
 @Service
 public class KakaoTokenService {
     private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String REDIRECT_URI = "http://localhost:8080/auth/callback";
+    private static final String REDIRECT_URI = "http://localhost:8080/api/auth/callback";
 
     @Value("${kakao.client-id}")
     private String clientId;

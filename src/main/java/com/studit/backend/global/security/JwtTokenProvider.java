@@ -1,5 +1,6 @@
 package com.studit.backend.global.security;
 
+import com.studit.backend.domain.user.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -10,6 +11,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import static com.studit.backend.domain.user.entity.User.Role.*;
 
 @Component
 public class JwtTokenProvider {
@@ -21,7 +23,7 @@ public class JwtTokenProvider {
 
 
     // JWT 생성
-    public String createToken(Long userId, String role) {
+    public String createToken(Long userId, User.Role role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000 * 60 * 60 * 24); // 1일
 
