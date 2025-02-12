@@ -38,9 +38,10 @@ spring:
 
 kakao:
   client-id: 0dbf8ff608e5c9d905e3b8f95a9ca48c
-  redirect-uri: http://localhost:8080/auth/callback
-  logout_redirect_uri: http://localhost:8080/auth/kakao-logout
+  redirect-uri: http://localhost:8080/api/auth/callback
+  logout_redirect_uri: http://localhost:8080/api/auth/kakao-logout
   service_app_admin_key: adc00d63db10846333bc186022ccd551
+  client-secret: TnQEcPvKF61CSeUh7tuUeXTg4eWbhT5g
 
 logging:
   level:
