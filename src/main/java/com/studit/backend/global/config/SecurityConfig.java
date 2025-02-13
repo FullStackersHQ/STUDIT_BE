@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login","auth/callback","/","/auth/kakao-logout").permitAll()
+                        .requestMatchers("/ws/timer").permitAll() // 웹소켓 경로도 허용
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout

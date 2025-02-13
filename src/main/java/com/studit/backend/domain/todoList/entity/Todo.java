@@ -24,6 +24,10 @@ public class Todo {
     @ColumnDefault("0")
     private Long totalStudyTime = 0L; // 기본값 0초로 설정
 
+    private Long userId;
+
+
+    private Long studyId;
 
     // 생성일시 컬럼
     @CreationTimestamp
