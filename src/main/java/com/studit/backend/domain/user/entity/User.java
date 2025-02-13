@@ -10,23 +10,20 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@ToString
-@Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Table(name = "user")
 public class User {
 
-    /*
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Id 와 관련해서 -> 우리 데이터베이스에서 ID를 부여하는것이 나을까?
-    카카오톡 id를 그대로가져와서 쓰는게 맞을까?? 카카오톡 ID도 고유하긴함.대신 ID가길어서
-    bitint로 들어가긴하는 것 같음.
-    */
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 생성 전략 지정
     @Column(nullable = false, unique = true)
     private Long id;
 
+    @Column(unique = true)
+    private Long kakaoId;
 
     @Column(nullable = false, length = 100)
     private String nickname;
@@ -41,6 +38,12 @@ public class User {
     private String email;  //필요없으면 삭제.. 프론트분들께 오늘밤 여쭤보기
 
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10) // 적절한 길이 지정
+    private Role role; // 사용자 권한 (USER, ADMIN)
+    public enum Role {
+        ROLE_USER, ROLE_ADMIN
+    }
     // 생성일시
     @CreationTimestamp
     @Column(nullable = false, updatable = false)  // 수정 불가
@@ -60,10 +63,16 @@ public class User {
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private List<StudyPartcpntMgnt> studyPartcpntMgntList;
 
-    public User(Long id, String nickname, String profileImageUrl) {
-        this.id = id;
+    public User(Long kakaoId, String nickname, String profileImageUrl, Role role) {
+        this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.profileImage = profileImageUrl;
+        this.role = role;
+    }
+
+    // 예치금만큼 차감 후 남은 포인트로 수정
+    public void deductPoint(int deposit) {
+        this.point -= deposit;
     }
 
 }
