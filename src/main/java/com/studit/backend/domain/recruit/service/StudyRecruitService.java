@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +27,10 @@ public class StudyRecruitService {
     private final StudyRegisterRepository studyRegisterRepository;
     private final UserRepository userRepository;
 
+    // TODO: 모집자 포인트 차감 로직 pointService 에서 구현될 수 있도록 수정 (실제 차감 + 로그)
     // 스터디 모집글 생성
     @Transactional
-    public Long createRecruit(StudyRecruitRequest.Create request, Long leaderId) {
+    public void createRecruit(StudyRecruitRequest.Create request, Long leaderId) {
 
         // 모집자 정보 가져오기
         User leader = userRepository.findById(leaderId)
@@ -59,7 +59,7 @@ public class StudyRecruitService {
                 .recruitEndAt(request.getRecruitEndAt())
                 .build();
 
-        return studyRecruitRepository.save(studyRecruit).getId();
+        studyRecruitRepository.save(studyRecruit);
     }
 
     // 스터디 모집글 목록 조회
@@ -84,7 +84,7 @@ public class StudyRecruitService {
 
     // 스터디 모집글 목록 조회 (검색, 필터링 적용)
     public Page<StudyRecruitResponse.Summary> getSearchRecruits(
-            String title, List<String> tags, StudyCategory category,
+            String title, StudyCategory category,
             Integer minDeposit, Integer maxDeposit, Integer minGoalTime, Integer maxGoalTime,
             Pageable pageable
     ) {
@@ -93,10 +93,9 @@ public class StudyRecruitService {
         int maxDepositValue = (maxDeposit != null) ? maxDeposit : Integer.MAX_VALUE;
         int minGoalTimeValue = (minGoalTime != null) ? minGoalTime : 0;
         int maxGoalTimeValue = (maxGoalTime != null) ? maxGoalTime : Integer.MAX_VALUE;
-        // List<String> → String 변환 (쉼표로 구분)
-        String tagsValue = (tags != null && !tags.isEmpty()) ? String.join(",", tags) : null;
 
-        Page<StudyRecruit> searchRecruits = studyRecruitRepository.findByFilters(title, tagsValue, category, minDepositValue, maxDepositValue, minGoalTimeValue, maxGoalTimeValue, pageable);
+        Page<StudyRecruit> searchRecruits = studyRecruitRepository.findByFilters(
+                title, category, minDepositValue, maxDepositValue, minGoalTimeValue, maxGoalTimeValue, pageable);
 
         return searchRecruits.map(studyRecruit -> StudyRecruitResponse.Summary.builder()
                 .recruitId(studyRecruit.getId())
@@ -139,22 +138,50 @@ public class StudyRecruitService {
     }
 
     // 스터디 모집글 수정
-    public Long updateRecruit() {
-        return null;
+    public void updateRecruit(Long recruitId, StudyRecruitRequest.Update request, Long userId) {
+        StudyRecruit studyRecruit = studyRecruitRepository.findById(recruitId)
+                .orElseThrow(() -> new EntityNotFoundException("Recruit not found"));
+
+        // 모집장이 맞는지 확인
+        if (!studyRecruit.getLeader().getId().equals(userId)) {
+            throw new RuntimeException("수정 권한이 없습니다.");
+        }
+
+        studyRecruit.update(request);
+        studyRecruitRepository.save(studyRecruit);
     }
 
     // 스터디 모집글 삭제
-    public Long deleteRecruit() {
-        return null;
+    public void deleteRecruit(Long recruitId, Long userId) {
+        StudyRecruit studyRecruit = studyRecruitRepository.findById(recruitId)
+                .orElseThrow(() -> new EntityNotFoundException("Recruit not found"));
+
+        // 모집장이 맞는지 확인
+        if (!studyRecruit.getLeader().getId().equals(userId)) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
+        }
+
+        // 가입자들의 예치금 환불 처리
+//        List<StudyRegister> studyRegisters = studyRegisterRepository.findByStudyRecruit(studyRecruit);
+//        for (StudyRegister register : studyRegisters) {
+//            User user = register.getUser();
+//            pointService.refundDeposit(user.getId(), studyRecruit.getDeposit());
+//        }
+
+        // 모집자의 예치금 환불 처리
+//        User leader = studyRecruit.getLeader();
+//        pointService.refundDeposit(leader.getId(), studyRecruit.getDeposit());
+
+        studyRecruitRepository.delete(studyRecruit);
     }
 
     // 스터디 가입
-    public Long studyRegister() {
-        return null;
+    public void studyRegister() {
+
     }
 
     // 스터디 가입 철회
-    public Long withdrawRegister() {
-        return null;
+    public void withdrawRegister() {
+
     }
 }

@@ -70,9 +70,14 @@ public class User {
         this.role = role;
     }
 
-    // 예치금만큼 차감 후 남은 포인트로 수정
+    // 포인트 -
     public void deductPoint(int deposit) {
         this.point -= deposit;
+    }
+
+    // 포인트 +
+    public void addPoint(int deposit) {
+        this.point += deposit;
     }
 
 }

@@ -32,7 +32,9 @@ public class StudyRecruitController {
         // JWT 에서 userId 추출
         Long leaderId = jwtTokenProvider.getUserIdFromToken(token);
 
-        return ResponseEntity.ok(studyRecruitService.createRecruit(request, leaderId));
+        studyRecruitService.createRecruit(request, leaderId);
+
+        return ResponseEntity.ok("모집글이 생성되었습니다.");
     }
 
     // 스터디 모집글 목록 조회
@@ -52,7 +54,6 @@ public class StudyRecruitController {
     @GetMapping("/search")
     public ResponseEntity<?> getSearchRecruits(
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) List<String> tags,
             @RequestParam(required = false) StudyCategory category,
             @RequestParam(required = false) Integer minDeposit,
             @RequestParam(required = false) Integer maxDeposit,
@@ -66,7 +67,7 @@ public class StudyRecruitController {
         Pageable pageable = PageRequest.of(page, pageSize);
 
         Page<StudyRecruitResponse.Summary> searchRecruits = studyRecruitService.getSearchRecruits(
-                title, tags, category, minDeposit, maxDeposit, minGoalTime, maxGoalTime, pageable);
+                title, category, minDeposit, maxDeposit, minGoalTime, maxGoalTime, pageable);
 
         return ResponseEntity.ok(searchRecruits);
     }
@@ -79,20 +80,31 @@ public class StudyRecruitController {
         return ResponseEntity.ok(recruit);
     }
 
-    // TODO: 제목, 설명, 카테고리, 태그, 최대 인원수 수정 가능
     // 스터디 모집글 수정
     @PutMapping("/{recruitId}")
-    public ResponseEntity<?> updateRecruit() {
+    public ResponseEntity<?> updateRecruit(
+            @PathVariable Long recruitId,
+            @RequestHeader("Authorization") String token,
+            @Validated @RequestBody StudyRecruitRequest.Update request) {
+        // JWT 에서 userId 추출
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
 
-        return null;
+        studyRecruitService.updateRecruit(recruitId, request, userId);
+
+        return ResponseEntity.ok("모집글이 수정되었습니다.");
     }
 
-    // TODO: 모집자와 가입자 포인트 환불
     // 스터디 모집글 삭제
     @DeleteMapping("/{recruitId}")
-    public ResponseEntity<?> deleteRecruit() {
+    public ResponseEntity<?> deleteRecruit(
+            @PathVariable Long recruitId,
+            @RequestHeader("Authorization") String token) {
+        // JWT 에서 userId 추출
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
 
-        return null;
+        studyRecruitService.deleteRecruit(recruitId, userId);
+
+        return ResponseEntity.ok("모집글이 삭제되었습니다.");
     }
 
     // TODO: 가입시 포인트 차감
