@@ -107,18 +107,29 @@ public class StudyRecruitController {
         return ResponseEntity.ok("모집글이 삭제되었습니다.");
     }
 
-    // TODO: 가입시 포인트 차감
     // 스터디 가입
     @PostMapping("/{recruitId}/registers")
-    public ResponseEntity<?> studyRegister() {
+    public ResponseEntity<?> studyRegister(
+            @PathVariable Long recruitId,
+            @RequestHeader("Authorization") String token) {
+        // JWT 에서 userId 추출
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
 
-        return null;
+        studyRecruitService.studyRegister(recruitId, userId);
+
+        return ResponseEntity.ok("스터디에 가입되셨습니다.");
     }
 
-    // TODO: 철회시 포인트 환불
     // 스터디 가입 철회
     @DeleteMapping("/{recruitId}/registers")
-    public ResponseEntity<?> withdrawRegister() {
-        return null;
+    public ResponseEntity<?> withdrawRegister(
+            @PathVariable Long recruitId,
+            @RequestHeader("Authorization") String token) {
+        // JWT 에서 userId 추출
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
+
+        studyRecruitService.withdrawRegister(recruitId, userId);
+
+        return ResponseEntity.ok("스터디 가입이 철회되었습니다.");
     }
 }
