@@ -2,6 +2,7 @@ package com.studit.backend.domain.recruit.entity;
 
 import com.studit.backend.domain.recruit.RecruitStatus;
 import com.studit.backend.domain.recruit.StudyCategory;
+import com.studit.backend.domain.recruit.dto.StudyRecruitRequest;
 import com.studit.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -57,6 +58,15 @@ public class StudyRecruit {
 
     private LocalDateTime updatedAt; // 최종수정일
 
-    @OneToMany(mappedBy = "studyRecruit", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "studyRecruit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyRegister> studyRegisters; // 가입자 리스트
+
+    // 수정할 데이터만 업데이트하는 메서드
+    public void update(StudyRecruitRequest.Update request) {
+        this.title = request.getTitle();
+        this.description = request.getDescription();
+        this.tags = String.join(",", request.getTags());
+        this.category = request.getCategory();
+        this.maxMembers = request.getMaxMembers();
+    }
 }
