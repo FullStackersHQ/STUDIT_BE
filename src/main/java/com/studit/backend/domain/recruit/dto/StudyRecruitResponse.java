@@ -22,8 +22,7 @@ public class StudyRecruitResponse {
         private LocalDateTime recruitEndAt;
         private int currentMembers;
         private int maxMembers;
-        private String status;
-    }
+        private String status;}
 
     @Builder
     @Data
@@ -42,7 +41,4 @@ public class StudyRecruitResponse {
         private LocalDateTime recruitEndAt;
         private int currentMembers;
         private int maxMembers;
-        private String status;
-    }
-
-}
+        private String status;}}
