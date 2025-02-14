@@ -41,4 +41,24 @@ public class StudyRecruitRequest {
 
         @NotNull(message = "모집 종료일은 필수 입력값입니다.")
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH")
-        private LocalDateTime recruitEndAt;}}
+        private LocalDateTime recruitEndAt;
+    }
+
+    @Data
+    public static class Update {
+        @NotBlank(message = "모집 제목은 필수 입력값입니다.")
+        private String title;
+
+        @NotBlank(message = "모집 설명은 필수 입력값입니다.")
+        private String description;
+
+        private List<String> tags;
+
+        @NotNull(message = "카테고리는 필수 입력값입니다.")
+        private StudyCategory category;
+
+        @NotNull(message = "최대 인원수는 필수 입력값입니다.")
+        @Min(value = 1, message = "최대 인원수는 1명 이상이어야 합니다.")
+        private Integer maxMembers;
+    }
+}

@@ -16,14 +16,12 @@ public interface StudyRecruitRepository extends JpaRepository<StudyRecruit, Long
 
     @Query("SELECT sr FROM StudyRecruit sr " +
             "WHERE sr.status = 'ACTIVE' " + // 모집 상태가 ACTIVE 인 것만 조회
-            "AND (:title IS NULL OR sr.title LIKE %:title%) " +
+            "AND (:title IS NULL OR sr.title LIKE %:title% OR sr.tags LIKE %:title%) " +  // tags 포함 검색
             "AND (:category IS NULL OR sr.category = :category) " +
             "AND sr.deposit BETWEEN :minDeposit AND :maxDeposit " +
-            "AND sr.goalTime BETWEEN :minGoalTime AND :maxGoalTime " +
-            "AND (:tags IS NULL OR sr.tags LIKE %:tags%)")
+            "AND sr.goalTime BETWEEN :minGoalTime AND :maxGoalTime")
     Page<StudyRecruit> findByFilters(
             @Param("title") String title,
-            @Param("tags") String tags,
             @Param("category") StudyCategory category,
             @Param("minDeposit") int minDeposit,
             @Param("maxDeposit") int maxDeposit,
