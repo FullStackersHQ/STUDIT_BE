@@ -1,8 +1,11 @@
 package com.studit.backend.domain.recruit.repository;
 
 import com.studit.backend.domain.recruit.RecruitStatus;
+import com.studit.backend.domain.recruit.RegisterStatus;
 import com.studit.backend.domain.recruit.StudyCategory;
 import com.studit.backend.domain.recruit.entity.StudyRecruit;
+import com.studit.backend.domain.recruit.entity.StudyRegister;
+import com.studit.backend.domain.user.entity.User;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 @Repository
 public interface StudyRecruitRepository extends JpaRepository<StudyRecruit, Long> {
     Page<StudyRecruit> findByStatusOrderByRecruitStartAtDesc(RecruitStatus status, Pageable pageable);
@@ -29,6 +33,17 @@ public interface StudyRecruitRepository extends JpaRepository<StudyRecruit, Long
             @Param("maxDeposit") int maxDeposit,
             @Param("minGoalTime") int minGoalTime,
             @Param("maxGoalTime") int maxGoalTime,
+            Pageable pageable
+    );
+    @Query("SELECT sr.studyRecruit FROM StudyRegister sr " +
+            "WHERE sr.user = :user " +
+            "AND sr.status = :registerStatus " +
+            "AND sr.studyRecruit.status = :recruitStatus " +
+            "AND sr.studyRecruit.studyStartAt > CURRENT_TIMESTAMP")
+    Page<StudyRecruit> findWaitingStudyRoomsByUser(
+            @Param("user") User user,
+            @Param("registerStatus") RegisterStatus registerStatus,
+            @Param("recruitStatus") RecruitStatus recruitStatus,
             Pageable pageable
     );
 }

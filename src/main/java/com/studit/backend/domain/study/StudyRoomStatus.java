@@ -1,6 +1,6 @@
 package com.studit.backend.domain.study;
 
 public enum StudyRoomStatus {
-    progress, //(진행중)
-    ended     //(종료)
+    PROGRESS, //(진행중)
+    ENDED     //(종료)
 }

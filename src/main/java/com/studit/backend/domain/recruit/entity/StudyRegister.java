@@ -1,5 +1,7 @@
 package com.studit.backend.domain.recruit.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.studit.backend.domain.recruit.RegisterStatus;
 import com.studit.backend.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -22,6 +24,7 @@ public class StudyRegister {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "recruit_id")
     private StudyRecruit studyRecruit;
 

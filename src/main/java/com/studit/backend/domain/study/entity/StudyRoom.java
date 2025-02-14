@@ -1,17 +1,25 @@
 package com.studit.backend.domain.study.entity;
 
+import com.studit.backend.domain.StudyPartcpntMgnt.entity.StudyPartcpntMgnt;
 import com.studit.backend.domain.study.StudyRoomStatus;
 import com.studit.backend.domain.recruit.StudyCategory;
 import com.studit.backend.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import static com.studit.backend.domain.study.StudyRoomStatus.*;
 
-import static com.studit.backend.domain.study.StudyRoomStatus.progress;
 
 @Entity
+@Getter
+@Setter
 public class StudyRoom {
 
     @Id
@@ -37,7 +45,7 @@ public class StudyRoom {
     private LocalDateTime studyEndAt; // 스터디 종료일
 
     @Enumerated(EnumType.STRING)
-    private StudyRoomStatus status = progress; // 스터디 상태 (progress(진행중), ended(종료))
+    private StudyRoomStatus status = PROGRESS; // 스터디 상태 (progress(진행중), ended(종료))
 
     // 수정일시
     @UpdateTimestamp

@@ -1,5 +1,7 @@
 package com.studit.backend.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.studit.backend.domain.StudyPartcpntMgnt.entity.StudyPartcpntMgnt;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "user")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // 🔥 Hibernate 프록시 무시
 public class User {
 
     @Id
@@ -63,6 +66,7 @@ public class User {
 
     // 스터디참여자관리(1:N)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<StudyPartcpntMgnt> studyPartcpntMgntList;
 
     public User(Long kakaoId, String nickname, String profileImageUrl, Role role) {

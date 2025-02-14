@@ -16,6 +16,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
     private final Key secretKey;
+    public Long getUserIdFromToken;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Base64.getDecoder().decode(secretKey); // Base64 디코딩
@@ -38,9 +39,12 @@ public class JwtTokenProvider {
 
     // HTTP 요청에서 JWT 추출
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7).trim();
+        return resolveToken(request.getHeader("Authorization"));
+    }
+    // 문자열에서 JWT 추출 (오버로딩)
+    public String resolveToken(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7).trim();
         }
         return null;
     }

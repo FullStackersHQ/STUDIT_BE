@@ -1,5 +1,7 @@
 package com.studit.backend.domain.recruit.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.studit.backend.domain.recruit.RecruitStatus;
 import com.studit.backend.domain.recruit.StudyCategory;
 import com.studit.backend.domain.user.entity.User;
@@ -58,5 +60,6 @@ public class StudyRecruit {
     private LocalDateTime updatedAt; // 최종수정일
 
     @OneToMany(mappedBy = "studyRecruit", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<StudyRegister> studyRegisters; // 가입자 리스트
 }
