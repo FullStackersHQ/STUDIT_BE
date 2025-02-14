@@ -67,12 +67,7 @@ public class User {
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.profileImage = profileImageUrl;
-        this.role = role;
-    }
+        this.role = role;}
 
     // 예치금만큼 차감 후 남은 포인트로 수정
-    public void deductPoint(int deposit) {
-        this.point -= deposit;
-    }
-
-}
+    public void deductPoint(int deposit) {this.point -= deposit;}}

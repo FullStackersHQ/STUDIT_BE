@@ -46,8 +46,7 @@ public class StudyRecruit {
     public void prePersist() {
         if (this.recruitStartAt == null) {
             this.recruitStartAt = LocalDateTime.now(); // 현재 시간으로 기본값 설정
-        }
-    }
+        }}
 
     private LocalDateTime recruitEndAt; // 모집 종료일
 

@@ -41,6 +41,4 @@ public class StudyRecruitRequest {
 
         @NotNull(message = "모집 종료일은 필수 입력값입니다.")
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH")
-        private LocalDateTime recruitEndAt;
-    }
-}
+        private LocalDateTime recruitEndAt;}}

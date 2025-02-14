@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudyRegisterRepository extends JpaRepository<StudyRegister, Long> {
-    int countByStudyRecruitAndStatus(StudyRecruit studyRecruit, RegisterStatus status);
-}
+    int countByStudyRecruitAndStatus(StudyRecruit studyRecruit, RegisterStatus status);}
