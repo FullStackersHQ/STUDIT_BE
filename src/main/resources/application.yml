@@ -1,18 +1,52 @@
 spring:
   application:
-    name: STUDIT Backend
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    name: studit
+  profiles:
+    active: test #dev 개발기 test 테스트 prod 운영기
+  redis:
+    host: localhost
+    port: 6379
   jpa:
+    database: ${spring.jpa.database}
     hibernate:
-      ddl-auto: create
+      ddl-auto: ${spring.hibernate.ddl-auto}
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
     defer-datasource-initialization: true
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:studit
-    username: sa
-    password:
+    driver-class-name: ${spring.datasource.driver-class-name}
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${spring.security.oauth2.client.registration.kakao.client-id}
+            client-secret: { CLIENT_SECRET }
+            redirect-uri: ${spring.security.oauth2.client.registration.kakao.redirect-uri}
+            authorization-grant-type: ${spring.security.oauth2.client.registration.kakao.authorization-grant-type}
+            client-authentication-method: ${spring.security.oauth2.client.registration.kakao.client-authentication-method}
+            scope: ${spring.security.oauth2.client.registration.kakao.scope}
+        provider:
+          kakao:
+            authorization-uri: ${spring.security.oauth2.client.provider.kakao.authorization-uri}
+            token-uri: ${spring.security.oauth2.client.provider.kakao.token-uri}
+            user-info-uri: ${spring.security.oauth2.client.provider.kakao.user-info-uri}
+            user-name-attribute: ${spring.security.oauth2.client.provider.kakao.user-name-attribute}
+kakao:
+  client-id: ${kakao.client-id}
+  redirect-uri: ${kakao.redirect-uri}
+  logout_redirect_uri: ${kakao.logout_redirect_uri}
+  service_app_admin_key: ${kakao.service_app_admin_key}
+  client-secret: ${kakao.client-secret}
+logging:
+  level:
+    org.springframework.security: ${logging.level.org.springframework.security}
+    org.springframework.web: ${logging.level.org.springframework.web}
+    org.springframework.security.oauth2: ${logging.level.org.springframework.security.oauth2}
+jwt:
+  secret: ${jwt.secret}
