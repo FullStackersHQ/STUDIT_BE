@@ -1,6 +1,8 @@
 package com.studit.backend.domain.todoList.entity;
 
+import com.studit.backend.domain.study.entity.StudyRoom;
 import com.studit.backend.domain.todoList.entity.Enum.TodoEndType;
+import com.studit.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
@@ -24,10 +26,13 @@ public class Todo {
     @ColumnDefault("0")
     private Long totalStudyTime = 0L; // 기본값 0초로 설정
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User userId;
 
-
-    private Long studyId;
+    @ManyToOne
+    @JoinColumn(name = "study_Id", nullable = false)
+    private StudyRoom studyId;
 
     // 생성일시 컬럼
     @CreationTimestamp
