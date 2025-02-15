@@ -13,10 +13,14 @@ public class TodoListAllResponse {
 
     public TodoListAllResponse(List<Todo> todoList) {
         Long totalTime = 0L;
-        for(Todo todo : todoList) {
-          totalTime += todo.getTotalStudyTime();
+        if (!todoList.isEmpty()) {
+
+            for(Todo todo : todoList) {
+            totalTime += todo.getTotalStudyTime();
+            }
         }
         studyTotalTime = formatDuration(totalTime);
         this.todoList = todoList;
     }
+
 }

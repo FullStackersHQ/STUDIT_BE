@@ -28,11 +28,11 @@ public class Todo {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "study_Id", nullable = false)
-    private StudyRoom studyId;
+    private StudyRoom study;
 
     // 생성일시 컬럼
     @CreationTimestamp
