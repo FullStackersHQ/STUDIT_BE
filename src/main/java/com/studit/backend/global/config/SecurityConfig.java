@@ -25,8 +25,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login","auth/callback","/","/auth/kakao-logout").permitAll()
                         .requestMatchers("/ws/timer").permitAll() // 웹소켓 경로도 허용
-                        .anyRequest().authenticated()
-                        //.anyRequest().permitAll()  // 모든 요청 허용
+                        //.anyRequest().authenticated()
+                        .anyRequest().permitAll()  // 모든 요청 허용
                 )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
