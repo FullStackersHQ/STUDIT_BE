@@ -1,6 +1,9 @@
 package com.studit.backend.domain.todoList.controller;
 
+import com.studit.backend.domain.todoList.dto.TodoCreateRequest;
 import com.studit.backend.domain.todoList.dto.TodoListAllResponse;
+import com.studit.backend.domain.todoList.dto.TodoResponse;
+import com.studit.backend.domain.todoList.dto.TodoUpdateRequest;
 import com.studit.backend.domain.todoList.entity.Enum.TodoEndType;
 import com.studit.backend.domain.todoList.entity.Todo;
 import com.studit.backend.domain.todoList.service.TodoService;
@@ -30,31 +33,41 @@ public class TodoController {
         return ResponseEntity.ok().body(todoListAllResponse);// response;
     }
 
-    @GetMapping(value = "/test",produces = "application/json" )
-    public ResponseEntity<TodoListAllResponse> getTodosByStudyId1() {
+    /**
+     * @ getTodosByStudyIdTest test를위해서 만든 api
+     * @return :
+     */
+    @GetMapping(value = "/test")
+    public ResponseEntity<TodoListAllResponse> getTodosByStudyIdTest() {
 
         TodoListAllResponse todoListAllResponse = todoService.findByUserIdAndStudyId(1L,1L);
         return ResponseEntity.ok().body(todoListAllResponse);// response;
     }
 
     @PostMapping("/new")
-    public Todo createTodo(@RequestHeader("Authorization") String token,@RequestBody Todo todo) {
+    public ResponseEntity<TodoResponse> createTodo(@RequestHeader("Authorization") String token, @RequestBody TodoCreateRequest todoRequest) {
         Long userid = jwtTokenProvider.getUserIdFromToken(token);
 
-        return null;//todoService.createTodo(todo);
+        TodoResponse todoResponse = todoService.createTodo(userid, todoRequest);
+        if(todoResponse == null){
+            return ResponseEntity.badRequest().body(null);
+        }
+        return ResponseEntity.ok().body(todoResponse);
     }
 
 
     @PutMapping("/change")
-    public Todo updateTodo(@RequestHeader("Authorization") String token, @RequestBody Todo todo) {
-        return null;//todoService.updateTodo(todo);
+    public ResponseEntity<TodoResponse> updateTodo(@RequestHeader("Authorization") String token, @RequestBody TodoUpdateRequest todo) {
+        TodoResponse todoResponse = todoService.updateTodo(todo);
+         return ResponseEntity.ok().body(todoResponse);
     }
 
 
     @PatchMapping("/{todoId}/complete")
-    public Todo completeTodo(@PathVariable Long todoId, @RequestBody boolean request) {
-        TodoEndType endYn = request ? TodoEndType.Y : TodoEndType.N;
-        return null;//todoService.completeTodo(todoId, endYn);
+    public ResponseEntity<TodoResponse> completeTodo(@PathVariable Long todoId, @RequestBody boolean endYn) {
+        TodoResponse todoResponse = todoService.completeTodo(todoId, endYn? TodoEndType.Y: TodoEndType.N);
+
+        return ResponseEntity.ok().body(todoResponse);
     }
 }
 
