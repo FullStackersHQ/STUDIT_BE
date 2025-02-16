@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TodoRepository extends JpaRepository<Todo, Long> {
-    @Query("SELECT t FROM TODOS t WHERE t.user.id = :userId AND t.study.id = :studyId")
+    //Studyroom과 연동시 쿼리 변경해야함
+    @Query("SELECT t FROM TODOS t WHERE t.user.id = :userId AND t.study = :studyId")
     List<Todo> findByUserIdAndStudyId(@Param("userId") Long userId, @Param("studyId") Long studyId);
 }
