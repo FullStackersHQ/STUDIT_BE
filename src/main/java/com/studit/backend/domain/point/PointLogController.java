@@ -21,6 +21,13 @@ public class PointLogController {//포인트 로그
         PointLog pointLog=pointLogService.getPointLog(pointLogId);
         return ResponseEntity.ok(pointLog);}
 
+    @GetMapping//한 번에 여러 개 로그 조회(기본 10개씩)
+    public ResponseEntity<List<PointLog>> getPointLogs(@RequestParam Long userId,
+    @RequestParam(required = false, defaultValue = "0") Long cursor,
+    @RequestParam(defaultValue = "10") int pageSize){
+        List<PointLog> pointLogs=pointLogService.getPointLogs
+                (userId,cursor,pageSize);return ResponseEntity.ok(pointLogs);}
+
     @GetMapping("/getAll") public List<PointLog> getAll(){//모든 포인트 로그 조회
         List<PointLog> pointLog=pointLogService.getAll();
         pointLog.forEach(System.out::println);return pointLog;}
