@@ -1,6 +1,8 @@
 package com.studit.backend.domain.point;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +18,10 @@ public class PointLogService {//포인트 로그
 
     public PointLog getPointLog(Long pointLogId) {
         return pointLogRepository.findById(pointLogId).orElse(null);}
+
+    public List<PointLog> getPointLogs(Long userId, Long cursor, int pageSize){
+        Pageable pageable= PageRequest.of(0, pageSize);//최대 조회 개수 제한
+        return pointLogRepository.findNextPointLogs(userId, cursor, pageable);}
 
     public List<PointLog> getAll() {return pointLogRepository.findAll();}
 

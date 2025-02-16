@@ -28,12 +28,12 @@ public class PointLog {
         this.charge=pointLogRequest.getCharge();}
 
     public void withdraw(PointLogRequest pointLogRequest){
-        this.withdraw=pointLogRequest.getCharge();}
+        this.withdraw=pointLogRequest.getWithdraw();}
 
     public void refund(PointLogRequest pointLogRequest){
-        this.refund=pointLogRequest.getCharge();}
+        this.refund=pointLogRequest.getRefund();}
 
     public void deduct(PointLogRequest pointLogRequest){
-        this.deduct=pointLogRequest.getCharge();}}
+        this.deduct=pointLogRequest.getDeduct();}}
 
 //private PointLogType pointType;//포인트 타입
