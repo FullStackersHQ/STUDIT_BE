@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long>{
     List<User> findByNickname(String nickname);
+    User findByKakaoId(Long kakaId);
 }
