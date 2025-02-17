@@ -18,22 +18,19 @@ public class PointLog {
     private Long roomId; //스터디룸 ID
     private Long paymentId; //결제 ID
 
-    private Long charge; //충전 포인트
-    private Long withdraw; //출금 포인트
-    private Long refund; //환불 포인트
-    private Long deduct; //차감 포인트
+    private Long changePoint;//변동 포인트
+    private Long totalWithdrawPoint;//총 출금 포인트
+    private Long totalRewardPoint;//총 보상 포인트
+
+    private Long totalDeductPoint;//총 차감 포인트
     private Long totalPoint;//최종 포인트
 
-    public void charge(PointLogRequest pointLogRequest){
-        this.charge=pointLogRequest.getCharge();}
+    @Enumerated(EnumType.STRING)//Enum을 문자열로 저장
+    private PointLogType pointLogType;//포인트 로그 종류
 
-    public void withdraw(PointLogRequest pointLogRequest){
-        this.withdraw=pointLogRequest.getWithdraw();}
-
-    public void refund(PointLogRequest pointLogRequest){
-        this.refund=pointLogRequest.getRefund();}
-
-    public void deduct(PointLogRequest pointLogRequest){
-        this.deduct=pointLogRequest.getDeduct();}}
-
-//private PointLogType pointType;//포인트 타입
+    public void changePointForm(PointLogRequest pointLogRequest) {//포인트 로그 수정 형식
+        this.userId = pointLogRequest.getUserId();
+        this.roomId = pointLogRequest.getRoomId();
+        this.paymentId = pointLogRequest.getPaymentId();
+        this.changePoint = pointLogRequest.getChangePoint();
+        this.pointLogType = pointLogRequest.getPointLogType();}}
