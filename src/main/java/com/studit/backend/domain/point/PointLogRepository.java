@@ -15,14 +15,5 @@ public interface PointLogRepository extends JpaRepository<PointLog,Long> {
     List<PointLog> findNextPointLogs(@Param("userId") Long userId,
     @Param("cursor") Long cursor, Pageable pageable);
 
-    @Query("SELECT p FROM PointLog p WHERE p.charge>0")
-    List<PointLog> findByCharge();//충전
-
-    @Query("SELECT p FROM PointLog p WHERE p.withdraw>0")
-    List<PointLog> findByWithdraw();//충전
-
-    @Query("SELECT p FROM PointLog p WHERE p.refund>0")
-    List<PointLog> findByRefund();//충전
-
-    @Query("SELECT p FROM PointLog p WHERE p.deduct>0")
-    List<PointLog> findByDeduct();}//충전
+    //특징 포인트 로그타입(CHARGE,WITHDRAW 등)에 해당하는 데이터 조회
+    List<PointLog> findByPointLogType(PointLogType pointLogType);}

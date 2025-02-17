@@ -25,42 +25,60 @@ public class PointLogService {//포인트 로그
 
     public List<PointLog> getAll() {return pointLogRepository.findAll();}
 
-    public List<PointLog> getEach(Boolean charge, Boolean withdraw,
-                                  Boolean refund, Boolean deduct) {//기능에 해당되는 해당 포인트 로그들 조회
-        if(charge!=null&&charge){return pointLogRepository.findByCharge();}//충전
-        if(withdraw!=null&&withdraw){return pointLogRepository.findByWithdraw();}//출금
-        if(refund!=null&&refund){return pointLogRepository.findByRefund();}//환불
-        if(deduct!=null&&deduct){return pointLogRepository.findByDeduct();}//차감
+    public List<PointLog> getEach(PointLogType pointLogType) {
+        if(pointLogType!=null){return pointLogRepository.findByPointLogType(pointLogType);}
         return pointLogRepository.findAll();}//없을 시 모든 결과 조회
 
     public PointLog charge(Long pointLogId,PointLogRequest pointLogRequest) {//충전
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
-        long charge=pointLogRequest.getCharge();
+
+        long charge=pointLogRequest.getChangePoint();
         saved.setTotalPoint(saved.getTotalPoint()+charge);
-        saved.charge(pointLogRequest);
+        saved.changePointForm(pointLogRequest);
         return pointLogRepository.save(saved);}
 
     public PointLog withdraw(Long pointLogId,PointLogRequest pointLogRequest) {//출금
+        //포인트 로그 찾기
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
-        long withdraw=pointLogRequest.getWithdraw();
+
+        //출금값 가져오기
+        long withdraw=pointLogRequest.getChangePoint();
+
+        //출금 처리
         saved.setTotalPoint(saved.getTotalPoint()-withdraw);
-        saved.withdraw(pointLogRequest);
+        saved.setTotalWithdrawPoint(saved.getTotalWithdrawPoint()+withdraw);
+        saved.changePointForm(pointLogRequest);
+
+        //포인트 로그 저장
         return pointLogRepository.save(saved);}
 
     public PointLog refund(Long pointLogId,PointLogRequest pointLogRequest) {//환불
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
-        long refund=pointLogRequest.getRefund();
+
+        long refund=pointLogRequest.getChangePoint();
         saved.setTotalPoint(saved.getTotalPoint()+refund);
-        saved.refund(pointLogRequest);
+        saved.changePointForm(pointLogRequest);
         return pointLogRepository.save(saved);}
 
     public PointLog deduct(Long pointLogId,PointLogRequest pointLogRequest) {//차감
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
-        long deduct=pointLogRequest.getDeduct();
+
+        long deduct=pointLogRequest.getChangePoint();
         saved.setTotalPoint(saved.getTotalPoint()-deduct);
-        saved.deduct(pointLogRequest);
+        saved.setTotalDeductPoint(saved.getTotalDeductPoint()+deduct);
+        saved.changePointForm(pointLogRequest);
+        return pointLogRepository.save(saved);}
+
+    public PointLog reward(Long pointLogId, PointLogRequest pointLogRequest) {
+        PointLog saved=pointLogRepository.findById(pointLogId)
+                .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
+
+        long reward=pointLogRequest.getChangePoint();
+        saved.setTotalPoint(saved.getTotalPoint()+reward);
+        saved.setTotalRewardPoint(saved.getTotalRewardPoint()+reward);
+        saved.changePointForm(pointLogRequest);
         return pointLogRepository.save(saved);}}
