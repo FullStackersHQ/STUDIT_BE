@@ -15,4 +15,5 @@ public interface StudyRegisterRepository extends JpaRepository<StudyRegister, Lo
     int countByStudyRecruitAndStatus(StudyRecruit studyRecruit, RegisterStatus status);
     List<StudyRegister> findByStudyRecruit(StudyRecruit studyRecruit);
     Optional<StudyRegister> findByStudyRecruitIdAndUserId(Long recruitId, Long userId);
+    boolean existsByStudyRecruitAndUser(StudyRecruit studyRecruit, User user);
 }
