@@ -27,6 +27,4 @@ public interface StudyRecruitRepository extends JpaRepository<StudyRecruit, Long
             @Param("maxDeposit") int maxDeposit,
             @Param("minGoalTime") int minGoalTime,
             @Param("maxGoalTime") int maxGoalTime,
-            Pageable pageable
-    );
-}
+            Pageable pageable);}
