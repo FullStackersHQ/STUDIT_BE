@@ -71,7 +71,7 @@ public class PointLogController {//포인트 로그
                 .getTotalDeductPoint()+pointLogRequest.getChangePoint());
         return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);}
 
-    @PutMapping("/reward/{pointLogId}")//충전
+    @PutMapping("/reward/{pointLogId}")//보상
     public ResponseEntity<?> reward(@PathVariable Long pointLogId,
                                     @RequestBody PointLogRequest pointLogRequest) {
         PointLog pointLog = pointLogService.reward(pointLogId, pointLogRequest);
@@ -79,4 +79,5 @@ public class PointLogController {//포인트 로그
         pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()+pointLogRequest.getChangePoint());
         pointLogRequest.setTotalRewardPoint(pointLogRequest
                 .getTotalRewardPoint()+pointLogRequest.getChangePoint());
-        return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);}}
+        return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);
+    }}
