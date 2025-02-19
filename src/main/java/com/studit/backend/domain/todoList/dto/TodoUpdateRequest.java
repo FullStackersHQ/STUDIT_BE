@@ -1,6 +1,6 @@
 package com.studit.backend.domain.todoList.dto;
 
-import com.studit.backend.domain.study.entity.StudyRoom;
+import com.studit.backend.domain.room.entity.StudyRoom;
 import com.studit.backend.domain.todoList.entity.Todo;
 import com.studit.backend.domain.user.entity.User;
 import lombok.Getter;

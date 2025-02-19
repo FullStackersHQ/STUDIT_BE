@@ -1,14 +1,12 @@
 package com.studit.backend.domain.todoList.entity;
 
-import com.studit.backend.domain.study.entity.StudyRoom;
+import com.studit.backend.domain.room.entity.StudyRoom;
 import com.studit.backend.domain.todoList.entity.Enum.TodoEndType;
 import com.studit.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -32,16 +30,17 @@ public class Todo {
     @ColumnDefault("0")
     private Long totalStudyTime = 0L; // 기본값 0초로 설정
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-  //  @ManyToOne(fetch = FetchType.LAZY)
-  //  @JoinColumn(name = "study_Id", nullable = false)
-  //  private StudyRoom study;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_Id", nullable = false)
+    private StudyRoom study;
 
-     @Column(name = "study_Id", nullable = false)
-      private Long study;
+    // @Column(name = "study_Id", nullable = false)
+    // private Long study;
 
 
     // 생성일시 컬럼
@@ -71,15 +70,15 @@ public class Todo {
     public Todo(){}
 
     public Todo(StudyRoom study, User user,String todoName){
-       // this.study = study;
-        this.user = user;
-        this.todoName = todoName;
-    }
-    public Todo(Long study, User user,String todoName){
         this.study = study;
         this.user = user;
         this.todoName = todoName;
     }
+//    public Todo(Long study, User user,String todoName){
+//        //this.study = study;
+//        this.user = user;
+//        this.todoName = todoName;
+//    }
 
 
     // 수정 메서드 추가
@@ -89,5 +88,9 @@ public class Todo {
 
     public void update(TodoEndType endYn) {
         this.endYN = endYn;
+    }
+
+    public void updateAddTime(Long addTime) {
+        this.totalStudyTime += addTime;
     }
 }
