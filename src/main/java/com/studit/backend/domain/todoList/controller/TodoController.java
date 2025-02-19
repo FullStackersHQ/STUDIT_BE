@@ -69,6 +69,14 @@ public class TodoController {
 
         return ResponseEntity.ok().body(todoResponse);
     }
+
+
+    @PatchMapping("/{todoId}/addTimeTest")
+    public ResponseEntity<TodoResponse> addTimeTodo(@PathVariable Long todoId, @RequestBody Long addTime) {
+        TodoResponse todoResponse = todoService.addTimeTodo(todoId, addTime);
+
+        return ResponseEntity.ok().body(todoResponse);
+    }
 }
 
 
