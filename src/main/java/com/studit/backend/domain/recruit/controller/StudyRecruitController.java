@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/recruits")
@@ -32,7 +30,10 @@ public class StudyRecruitController {
         // JWT 에서 userId 추출
         Long leaderId = jwtTokenProvider.getUserIdFromToken(token);
 
-        studyRecruitService.createRecruit(request, leaderId);
+        Long recruitId = studyRecruitService.createRecruit(request, leaderId);
+
+        // 모집 종료 시 자동으로 스터디룸이 생성되도록 예약 등록
+        studyRecruitService.scheduleCreateRoom(recruitId);
 
         return ResponseEntity.ok("모집글이 생성되었습니다.");
     }

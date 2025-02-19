@@ -22,17 +22,19 @@ public class StudyRegister {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recruit_id")
+    @JoinColumn(name = "recruit_id", nullable = false)
     private StudyRecruit studyRecruit;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private RegisterStatus status = RegisterStatus.REGISTER;
 
+    @Column(name = "register_at", nullable = false, updatable = false)
     private LocalDateTime registerAt;
     @PrePersist
     public void prePersist() {
