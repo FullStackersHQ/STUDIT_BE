@@ -1,11 +1,13 @@
 package com.studit.backend.domain.user.entity;
 
+import com.studit.backend.domain.StudyPartcpntMgnt.entity.StudyPartcpntMgnt;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -59,9 +61,9 @@ public class User {
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private List<pointLog.PointLog> pointLogs;
 
-//    // 스터디참여자관리(1:N)
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<StudyPartcpntMgnt> studyPartcpntMgntList;
+    // 스터디참여자관리(1:N)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StudyPartcpntMgnt> studyPartcpntMgntList;
 
     public User(Long kakaoId, String nickname, String profileImageUrl, Role role) {
         this.kakaoId = kakaoId;

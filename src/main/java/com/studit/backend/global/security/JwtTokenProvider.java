@@ -1,25 +1,29 @@
 package com.studit.backend.global.security;
 
+import com.studit.backend.global.config.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import com.studit.backend.domain.user.entity.User;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    private final Key secretKey;
+    private final byte[] key;
+    private CustomUserDetailsService customUserDetailsService;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
-        byte[] keyBytes = Base64.getDecoder().decode(secretKey); // Base64 디코딩
-        this.secretKey = Keys.hmacShaKeyFor(keyBytes); // Key 타입 변환
+        this.key = secretKey.getBytes(StandardCharsets.UTF_8);
     }
 
     // JWT 생성
@@ -32,60 +36,105 @@ public class JwtTokenProvider {
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(secretKey, SignatureAlgorithm.HS256) // ✅ Key 타입 사용
+                .signWith(Keys.hmacShaKeyFor(key), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // HTTP 요청에서 JWT 추출
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7).trim();
-        }
-        return null;
-    }
 
-    // JWT 검증
+    // JWT 검증 로직 추가
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser()
-                    .verifyWith((SecretKey) secretKey) // Key 타입 전달
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
                     .build()
-                    .parseSignedClaims(token.trim());
+                    .parseClaimsJws(token);
 
-            return !claims.getPayload().getExpiration().before(new Date());
+            return !claims.getBody().getExpiration().before(new java.util.Date());
         } catch (ExpiredJwtException e) {
-            System.out.println("JWT 토큰이 만료됨");
-        } catch (JwtException | IllegalArgumentException e) {
-            System.out.println("JWT 토큰이 유효하지 않음");
+            System.out.println("만료된 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            System.out.println("지원되지 않는 JWT 토큰입니다.");
+        } catch (MalformedJwtException e) {
+            System.out.println("잘못된 JWT 토큰입니다.");
+        } catch (SignatureException e) {
+            System.out.println("JWT 서명이 유효하지 않습니다.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("JWT 토큰이 비어 있습니다.");
         }
         return false;
     }
 
-    // JWT 에서 userId 가져오기
-    public UserDetails getUserDetails(String token) {
-        String userId = Jwts.parser()
-                .verifyWith((SecretKey) secretKey) // Key 타입 전달
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
 
-        return org.springframework.security.core.userdetails.User.withUsername(userId).password("").roles("USER").build();
+    public String resolveToken(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7); // "Bearer " 제거 후 토큰 반환
+        }
+        return null;
     }
 
-    // JWT 에서 userId 추출
+    // 토큰에서 사용자명 추출
     public Long getUserIdFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return Long.valueOf(claims.getSubject());
+        try {
+            return Long.parseLong(
+                    Jwts.parserBuilder()
+                            .setSigningKey(key)
+                            .build()
+                            .parseClaimsJws(token)
+                            .getBody()
+                            .getSubject() // 토큰의 subject를 userId로 저장했으므로 가져오기
+            );
+        } catch (NumberFormatException e) {
+            System.out.println("토큰에서 userId를 파싱하는 중 오류 발생: " + e.getMessage());
+            return null; // userId를 정상적으로 변환할 수 없는 경우
+        } catch (JwtException e) {
+            System.out.println("JWT 파싱 오류: " + e.getMessage());
+            return null;
+        }
+    }
+    //토큰 만료 여부 체크
+    public boolean isExpired(String token) {
+        try {
+            Date expiration = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getExpiration();
+            return expiration.before(new Date());  // 현재 시간보다 이전이면 true 반환
+        } catch (JwtException e) {
+            return true;
+        }
+    }
+    public long getExpiration(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getExpiration()
+                    .getTime();
+        } catch (JwtException e) {
+            return 0L;
+        }
     }
 
-    // JWT 에서 Claims(페이로드) 추출
-    private Claims getClaimsFromToken(String token) {
-        return Jwts.parser()
-                .verifyWith((SecretKey) secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+
+    public String getTokenType(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("type", String.class); // "type" 클레임에서 문자열 값 가져오기
+        } catch (Exception e) {
+            return null; // 토큰이 유효하지 않다면 null 반환
+        }
+    }
+
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(String.valueOf(getUserIdFromToken(token)));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 }

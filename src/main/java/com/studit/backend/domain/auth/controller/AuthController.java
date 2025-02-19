@@ -1,8 +1,16 @@
 package com.studit.backend.domain.auth.controller;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import com.studit.backend.domain.user.entity.KakaoUser;
 import com.studit.backend.domain.user.entity.User;
 import com.studit.backend.domain.user.repository.UserRepository;
+import com.studit.backend.global.config.CustomUserDetails;
 import com.studit.backend.global.security.JwtTokenProvider;
 import com.studit.backend.domain.oauth.kakao.KakaoService;
 import com.studit.backend.domain.oauth.kakao.KakaoTokenService;
@@ -13,18 +21,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.http.Cookie;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import java.util.concurrent.TimeUnit;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -107,9 +119,17 @@ public class AuthController {
                     return userRepository.save(newUser);
                 });
 
+        //DB에 해당 유저 정보가 있다면 -> 만들어야할 이동시켜야함 마이페이지로
+        User user = userRepository.findByKakaoId(userInfo.getKakaoId());
 
         //  JWT 발급
-        String jwt = jwtTokenProvider.createToken(userInfo.getId(),userInfo.getRole());
+        String jwt = jwtTokenProvider.createToken(user.getId(), user.getRole());
+        // 권한 정보 추가
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(User.Role.ROLE_USER.name()));
+        //SecurityContextHolder에 인증 정보 저장
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 응답에 JWT 포함
         Map<String, String> response = new HashMap<>();
@@ -128,26 +148,53 @@ public class AuthController {
      *
      * @return
      */
+    @Secured("USER")
     @GetMapping("/kakao-logout")
-    public ResponseEntity<String> kakaoLogout(HttpServletRequest request, HttpServletResponse response) {
-        String logoutUrl = "https://kauth.kakao.com/oauth/logout" +
+    public void kakaoLogout(HttpServletRequest request, HttpServletResponse response, @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+        String kakaoLogoutUrl = "https://kauth.kakao.com/oauth/logout" +
                 "?client_id=" + clientId +
                 "&logout_redirect_uri=" + logoutRedirectUri;
 
-        // 헤더 설정
+        this.unlinkKakaoAccount(adminKey, String.valueOf(userDetails.getUser().getKakaoId()));
+        // 2. 카카오 로그아웃 URL 호출
+        ResponseEntity<String> restResponse = restTemplate.exchange(kakaoLogoutUrl, HttpMethod.GET, null, String.class);
+        // 3. DB에서 사용자 삭제
+        if (restResponse.getStatusCode().is2xxSuccessful()) {
+            userRepository.deleteById(userDetails.getUser().getId());
+            // JWT 토큰 만료 처리 (Redis에 로그아웃된 토큰 저장)
+            String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
+            long expiration = jwtTokenProvider.getExpiration(jwtToken);
+            redisTemplate.opsForValue().set(jwtToken, "logout", expiration, TimeUnit.MILLISECONDS);
+        }
+        response.sendRedirect("http://localhost:8080/api/auth/nextwork");
+    }
+    public void unlinkKakaoAccount(String adminKey, String kakaoUserId) {
+        String unlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", adminKey);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set("Authorization", "KakaoAK " + adminKey);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("target_id_type", "user_id");
+        body.add("target_id", kakaoUserId);
 
-        // HttpEntity에 헤더 추가
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
-        // RestTemplate을 이용해 GET 요청 보내기
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> restResponse = restTemplate.exchange(logoutUrl, HttpMethod.GET, entity, String.class);
-        
-        return ResponseEntity.status(restResponse.getStatusCode()).body("카카오 로그아웃 완료");
+        ResponseEntity<String> response = restTemplate.exchange(unlinkUrl, HttpMethod.POST, requestEntity, String.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("✅ 카카오 계정 연결 해제 성공!");
+        } else {
+            System.out.println("❌ 카카오 계정 연결 해제 실패: " + response.getBody());
+        }
     }
 
+    @GetMapping("/nextwork")
+    public ResponseEntity<Map<String, String>> next() {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "다음 작업");
+        return ResponseEntity.ok()
+                .body(response);
+    }
 
 }
 
