@@ -32,7 +32,6 @@ public class TodoService {
     @Autowired
     private TodoLogRepository todoLogRepository;
 
-
     @Transactional
     public TodoListAllResponse findByUserIdAndStudyId(Long userId, Long studyId) {
 
