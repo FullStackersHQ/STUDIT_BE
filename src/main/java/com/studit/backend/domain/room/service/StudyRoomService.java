@@ -1,6 +1,7 @@
 package com.studit.backend.domain.room.service;
 
 import com.studit.backend.domain.recruit.RecruitStatus;
+import com.studit.backend.domain.recruit.StudyCategory;
 import com.studit.backend.domain.recruit.entity.StudyRecruit;
 import com.studit.backend.domain.recruit.entity.StudyRegister;
 import com.studit.backend.domain.recruit.repository.StudyRecruitRepository;
@@ -89,6 +90,35 @@ public class StudyRoomService {
         Page<StudyRoom> rooms = studyRoomRepository.findByStatusOrderByStudyStartAtDesc(RoomStatus.ACTIVE, pageable);
 
         return rooms.map(studyRoom -> StudyRoomResponse.Summary.builder()
+                .roomId(studyRoom.getId())
+                .title(studyRoom.getTitle())
+                .category(studyRoom.getCategory().name())
+                .tags(Arrays.asList(studyRoom.getTags().split(",")))
+                .goalTime(studyRoom.getGoalTime())
+                .deposit(studyRoom.getDeposit())
+                .studyStartAt(studyRoom.getStudyStartAt())
+                .studyEndAt(studyRoom.getStudyEndAt())
+                .currentMembers(studyRoom.getStudyMembers().size())
+                .status(studyRoom.getStatus().name())
+                .build());
+    }
+
+    // 스터디룸 목록 조회 (검색, 필터링 적용)
+    public Page<StudyRoomResponse.Summary> getSearchRooms(
+            String title, StudyCategory category,
+            Integer minDeposit, Integer maxDeposit, Integer minGoalTime, Integer maxGoalTime,
+            Pageable pageable
+    ) {
+        // null 값 방지
+        int minDepositValue = (minDeposit != null) ? minDeposit : 0;
+        int maxDepositValue = (maxDeposit != null) ? maxDeposit : Integer.MAX_VALUE;
+        int minGoalTimeValue = (minGoalTime != null) ? minGoalTime : 0;
+        int maxGoalTimeValue = (maxGoalTime != null) ? maxGoalTime : Integer.MAX_VALUE;
+
+        Page<StudyRoom> searchRooms = studyRoomRepository.findByFilters(
+                title, category, minDepositValue, maxDepositValue, minGoalTimeValue, maxGoalTimeValue, pageable);
+
+        return searchRooms.map(studyRoom -> StudyRoomResponse.Summary.builder()
                 .roomId(studyRoom.getId())
                 .title(studyRoom.getTitle())
                 .category(studyRoom.getCategory().name())
