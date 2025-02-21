@@ -61,9 +61,9 @@ public class User {
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private List<pointLog.PointLog> pointLogs;
 
- //스터디참여자관리(1:N)
+    // 스터디멤버
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<StudyMember> studyPartcpntMgntList;
+    private List<StudyMember> studyMembers;
 
     public User(Long kakaoId, String nickname, String profileImageUrl, Role role) {
         this.kakaoId = kakaoId;

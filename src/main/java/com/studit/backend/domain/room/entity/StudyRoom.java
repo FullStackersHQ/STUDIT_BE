@@ -66,5 +66,5 @@ public class StudyRoom {
     }
 
     @OneToMany(mappedBy = "studyRoom", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StudyMember> members;
+    private List<StudyMember> studyMembers;
 }
