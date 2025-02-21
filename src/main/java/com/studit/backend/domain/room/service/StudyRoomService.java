@@ -6,14 +6,18 @@ import com.studit.backend.domain.recruit.entity.StudyRegister;
 import com.studit.backend.domain.recruit.repository.StudyRecruitRepository;
 import com.studit.backend.domain.room.MemberStatus;
 import com.studit.backend.domain.room.RoomStatus;
+import com.studit.backend.domain.room.dto.StudyRoomResponse;
 import com.studit.backend.domain.room.entity.StudyMember;
 import com.studit.backend.domain.room.entity.StudyRoom;
 import com.studit.backend.domain.room.repository.StudyMemberRepository;
 import com.studit.backend.domain.room.repository.StudyRoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -78,5 +82,23 @@ public class StudyRoomService {
 
         studyMemberRepository.saveAll(studyMembers);
         studyRoomRepository.save(studyRoom);
+    }
+
+    // 스터디룸 목록 조회
+    public Page<StudyRoomResponse.Summary> getAllRooms(Pageable pageable) {
+        Page<StudyRoom> rooms = studyRoomRepository.findByStatusOrderByStudyStartAtDesc(RoomStatus.ACTIVE, pageable);
+
+        return rooms.map(studyRoom -> StudyRoomResponse.Summary.builder()
+                .roomId(studyRoom.getId())
+                .title(studyRoom.getTitle())
+                .category(studyRoom.getCategory().name())
+                .tags(Arrays.asList(studyRoom.getTags().split(",")))
+                .goalTime(studyRoom.getGoalTime())
+                .deposit(studyRoom.getDeposit())
+                .studyStartAt(studyRoom.getStudyStartAt())
+                .studyEndAt(studyRoom.getStudyEndAt())
+                .currentMembers(studyRoom.getStudyMembers().size())
+                .status(studyRoom.getStatus().name())
+                .build());
     }
 }
