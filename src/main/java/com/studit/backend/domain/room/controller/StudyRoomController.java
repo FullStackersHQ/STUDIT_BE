@@ -8,10 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,5 +50,13 @@ public class StudyRoomController {
                 title, category, minDeposit, maxDeposit, minGoalTime, maxGoalTime, pageable);
 
         return ResponseEntity.ok(searchRooms);
+    }
+
+    // 스터디룸 상세 조회
+    @GetMapping("/{roomId}")
+    public ResponseEntity<?> getDetailRoom(@PathVariable Long roomId) {
+        StudyRoomResponse.Detail studyRoom = studyRoomService.getDetailRoom(roomId);
+
+        return ResponseEntity.ok(studyRoom);
     }
 }

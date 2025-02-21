@@ -12,6 +12,7 @@ import com.studit.backend.domain.room.entity.StudyMember;
 import com.studit.backend.domain.room.entity.StudyRoom;
 import com.studit.backend.domain.room.repository.StudyMemberRepository;
 import com.studit.backend.domain.room.repository.StudyRoomRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -130,5 +131,27 @@ public class StudyRoomService {
                 .currentMembers(studyRoom.getStudyMembers().size())
                 .status(studyRoom.getStatus().name())
                 .build());
+    }
+
+    // 스터디룸 상세 조회
+    public StudyRoomResponse.Detail getDetailRoom(Long roomId) {
+        StudyRoom studyRoom = studyRoomRepository.findById(roomId)
+                .orElseThrow((() -> new EntityNotFoundException("Room not found")));
+
+        return StudyRoomResponse.Detail.builder()
+                .roomId(studyRoom.getId())
+                .leaderId(studyRoom.getLeader().getId())
+                .leaderNickname(studyRoom.getLeader().getNickname())
+                .title(studyRoom.getTitle())
+                .description(studyRoom.getDescription())
+                .category(studyRoom.getCategory().name())
+                .tags(Arrays.asList(studyRoom.getTags().split(",")))
+                .goalTime(studyRoom.getGoalTime())
+                .deposit(studyRoom.getDeposit())
+                .studyStartAt(studyRoom.getStudyStartAt())
+                .studyEndAt(studyRoom.getStudyEndAt())
+                .currentMembers(studyRoom.getStudyMembers().size())
+                .status(studyRoom.getStatus().name())
+                .build();
     }
 }
