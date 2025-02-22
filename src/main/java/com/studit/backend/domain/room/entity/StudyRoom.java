@@ -2,6 +2,7 @@ package com.studit.backend.domain.room.entity;
 
 import com.studit.backend.domain.recruit.StudyCategory;
 import com.studit.backend.domain.room.RoomStatus;
+import com.studit.backend.domain.room.dto.StudyRoomRequest;
 import com.studit.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -67,4 +68,11 @@ public class StudyRoom {
 
     @OneToMany(mappedBy = "studyRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyMember> studyMembers;
+
+    // 수정할 데이터만 업데이트하는 메서드
+    public void update(StudyRoomRequest.Update request) {
+        this.title = request.getTitle();
+        this.description = request.getDescription();
+        this.tags = String.join(",", request.getTags());
+    }
 }
