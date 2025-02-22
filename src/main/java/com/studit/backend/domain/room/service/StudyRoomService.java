@@ -7,11 +7,14 @@ import com.studit.backend.domain.recruit.entity.StudyRegister;
 import com.studit.backend.domain.recruit.repository.StudyRecruitRepository;
 import com.studit.backend.domain.room.MemberStatus;
 import com.studit.backend.domain.room.RoomStatus;
+import com.studit.backend.domain.room.dto.StudyRoomRequest;
 import com.studit.backend.domain.room.dto.StudyRoomResponse;
 import com.studit.backend.domain.room.entity.StudyMember;
 import com.studit.backend.domain.room.entity.StudyRoom;
 import com.studit.backend.domain.room.repository.StudyMemberRepository;
 import com.studit.backend.domain.room.repository.StudyRoomRepository;
+import com.studit.backend.domain.user.entity.User;
+import com.studit.backend.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +32,7 @@ public class StudyRoomService {
     private final StudyRecruitRepository studyRecruitRepository;
     private final StudyRoomRepository studyRoomRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final UserRepository userRepository;
 
     // 스터디룸 생성
     @Transactional
@@ -153,5 +157,47 @@ public class StudyRoomService {
                 .currentMembers(studyRoom.getStudyMembers().size())
                 .status(studyRoom.getStatus().name())
                 .build();
+    }
+
+    // 스터디룸 수정 (제목, 설명, 태그 수정 가능)
+    public void updateRoom(Long roomId, StudyRoomRequest.Update request, Long userId) {
+        StudyRoom studyRoom = studyRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("StudyRoom not found"));
+
+        // 스터디장이 맞는지 확인
+        if (!studyRoom.getLeader().getId().equals(userId)) {
+            throw new RuntimeException("수정 권한이 없습니다.");
+        }
+
+        studyRoom.update(request);
+        studyRoomRepository.save(studyRoom);
+    }
+
+    // TODO: pointService 에서 구현될 수 있도록 수정 (실제 추가 + 로그)
+    // 스터디룸 삭제
+    @Transactional
+    public void deleteRoom(Long roomId, Long userId) {
+        StudyRoom studyRoom = studyRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("StudyRoom not found"));
+
+        // 스터디장이 맞는지 확인
+        if (!studyRoom.getLeader().getId().equals(userId)) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
+        }
+
+        User leader = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // 스터디장의 포인트 환불
+        leader.addPoint(studyRoom.getDeposit());
+
+        // 스터디원들의 포인트 환불
+        List<StudyMember> studyMembers = studyMemberRepository.findByStudyRoom(studyRoom);
+        for (StudyMember member : studyMembers) {
+            User user = member.getUser();
+            user.addPoint(studyRoom.getDeposit());
+        }
+
+        studyRoomRepository.delete(studyRoom);
     }
 }
