@@ -23,6 +23,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/login","auth/callback","/","/auth/kakao-logout").permitAll()
+                        .requestMatchers("/ws/timer").permitAll() // 웹소켓 경로도 허용
+                        //.anyRequest().authenticated()
                         .anyRequest().permitAll()  // 모든 요청 허용
                 )
                 .logout(logout -> logout
@@ -43,5 +46,7 @@ public class SecurityConfig {
                         })
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 적용;
-
         return http.build();}}
+        return http.build();
+    }
+}
