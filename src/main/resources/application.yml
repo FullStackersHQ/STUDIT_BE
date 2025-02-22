@@ -1,53 +1,52 @@
 spring:
   application:
     name: studit
+  profiles:
+    active: test #dev 개발기 test 테스트 prod 운영기
   redis:
     host: localhost
     port: 6379
   jpa:
-    database: mysql
+    database: ${spring.jpa.database}
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${spring.hibernate.ddl-auto}
     show-sql: true
     properties:
       hibernate:
         format_sql: true
     defer-datasource-initialization: true
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/studitdb?characterEncoding=UTF-8
-    username: root
-    password: 13579
+    driver-class-name: ${spring.datasource.driver-class-name}
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
   security:
     oauth2:
       client:
         registration:
           kakao:
-            client-id: 0dbf8ff608e5c9d905e3b8f95a9ca48c
-            client-secret: { CLIENT_SECRET } # 필요할 수도 있음
-            redirect-uri: http://localhost:8080/auth/callback
-            authorization-grant-type: authorization_code
-            client-authentication-method: client_secret_post
-            scope: profile_nickname, profile_image
+            client-id: ${spring.security.oauth2.client.registration.kakao.client-id}
+            client-secret: { CLIENT_SECRET }
+            redirect-uri: ${spring.security.oauth2.client.registration.kakao.redirect-uri}
+            authorization-grant-type: ${spring.security.oauth2.client.registration.kakao.authorization-grant-type}
+            client-authentication-method: ${spring.security.oauth2.client.registration.kakao.client-authentication-method}
+            scope: ${spring.security.oauth2.client.registration.kakao.scope}
         provider:
           kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
-
+            authorization-uri: ${spring.security.oauth2.client.provider.kakao.authorization-uri}
+            token-uri: ${spring.security.oauth2.client.provider.kakao.token-uri}
+            user-info-uri: ${spring.security.oauth2.client.provider.kakao.user-info-uri}
+            user-name-attribute: ${spring.security.oauth2.client.provider.kakao.user-name-attribute}
 kakao:
-  client-id: 0dbf8ff608e5c9d905e3b8f95a9ca48c
-  redirect-uri: http://localhost:8080/api/auth/callback
-  logout_redirect_uri: http://localhost:8080/api/auth/kakao-logout
-  service_app_admin_key: adc00d63db10846333bc186022ccd551
-  client-secret: TnQEcPvKF61CSeUh7tuUeXTg4eWbhT5g
-
+  client-id: ${kakao.client-id}
+  redirect-uri: ${kakao.redirect-uri}
+  logout_redirect_uri: ${kakao.logout_redirect_uri}
+  service_app_admin_key: ${kakao.service_app_admin_key}
+  client-secret: ${kakao.client-secret}
 logging:
   level:
-    org.springframework.security: TRACE
-    org.springframework.web: DEBUG
-    org.springframework.security.oauth2: DEBUG
-
+    org.springframework.security: ${logging.level.org.springframework.security}
+    org.springframework.web: ${logging.level.org.springframework.web}
+    org.springframework.security.oauth2: ${logging.level.org.springframework.security.oauth2}
 jwt:
-  secret: xAjB14zxBjipIlsClFPwvB177HwxkuTnOSjGLjJSNY0=
+  secret: ${jwt.secret}
