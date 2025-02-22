@@ -23,7 +23,7 @@ public class StudyRoomController {
 
     // 스터디룸 목록 조회
     @GetMapping
-    public ResponseEntity<?> getAllRooms(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<Page<StudyRoomResponse.Summary>> getAllRooms(@RequestParam(defaultValue = "0") int page) {
         // 한 페이지당 5개
         int pageSize = 5;
 
@@ -36,7 +36,7 @@ public class StudyRoomController {
 
     // 스터디룸 목록 조회 (검색, 필터링 적용)
     @GetMapping("/search")
-    public ResponseEntity<?> getSearchRooms(
+    public ResponseEntity<Page<StudyRoomResponse.Summary>> getSearchRooms(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) StudyCategory category,
             @RequestParam(required = false) Integer minDeposit,
@@ -58,7 +58,7 @@ public class StudyRoomController {
 
     // 스터디룸 상세 조회
     @GetMapping("/{roomId}")
-    public ResponseEntity<?> getDetailRoom(@PathVariable Long roomId) {
+    public ResponseEntity<StudyRoomResponse.Detail> getDetailRoom(@PathVariable Long roomId) {
         StudyRoomResponse.Detail studyRoom = studyRoomService.getDetailRoom(roomId);
 
         return ResponseEntity.ok(studyRoom);
@@ -66,7 +66,7 @@ public class StudyRoomController {
 
     // 스터디룸 수정 (제목, 설명, 태그 수정 가능)
     @PutMapping("/{roomId}")
-    public ResponseEntity<?> updateRoom(
+    public ResponseEntity<String> updateRoom(
             @PathVariable Long roomId,
             @RequestHeader("Authorization") String token,
             @Validated @RequestBody StudyRoomRequest.Update request) {
@@ -80,7 +80,7 @@ public class StudyRoomController {
 
     // 스터디룸 삭제
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<?> deleteRoom(
+    public ResponseEntity<String> deleteRoom(
             @PathVariable Long roomId,
             @RequestHeader("Authorization") String token) {
         // JWT 에서 userId 추출
