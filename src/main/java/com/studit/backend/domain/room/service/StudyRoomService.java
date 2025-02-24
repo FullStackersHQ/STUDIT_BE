@@ -218,4 +218,36 @@ public class StudyRoomService {
         // 스터디 멤버 삭제 (예치금 환불 X)
         studyMemberRepository.delete(studyMember);
     }
+
+    // 공지사항 작성 또는 수정 (Only 스터디장)
+    @Transactional
+    public void createOrUpdateNotice(Long roomId, Long userId, String content) {
+        StudyRoom studyRoom = studyRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("StudyRoom not found"));
+
+        // 스터디장이 맞는지 확인
+        if (!studyRoom.getLeader().getId().equals(userId)) {
+            throw new IllegalStateException("스터디장만 공지사항을 작성할 수 있습니다.");
+        }
+
+        // 공지사항 업데이트
+        studyRoom.setNoticeContent(content);
+        studyRoomRepository.save(studyRoom);
+    }
+
+    // 공지사항 삭제 (Only 스터디장)
+    @Transactional
+    public void deleteNotice(Long roomId, Long userId) {
+        StudyRoom studyRoom = studyRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("StudyRoom not found"));
+
+        // 스터디장이 맞는지 확인
+        if (!studyRoom.getLeader().getId().equals(userId)) {
+            throw new IllegalStateException("스터디장만 공지사항을 삭제할 수 있습니다.");
+        }
+
+        // 공지사항 삭제
+        studyRoom.setNoticeContent(null);
+        studyRoomRepository.save(studyRoom);
+    }
 }
