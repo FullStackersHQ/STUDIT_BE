@@ -200,4 +200,22 @@ public class StudyRoomService {
 
         studyRoomRepository.delete(studyRoom);
     }
+
+    // 스터디룸 나가기 (Only 스터디원)
+    @Transactional
+    public void leaveRoom(Long roomId, Long userId) {
+        StudyRoom studyRoom = studyRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("StudyRoom not found"));
+
+        // 스터디원인지 확인
+        StudyMember studyMember = studyMemberRepository.findByStudyRoomIdAndUserId(roomId, userId)
+                .orElseThrow(() -> new EntityNotFoundException("스터디멤버가 아닙니다."));
+
+        if (studyMember.getStatus() == MemberStatus.LEADER) {
+            throw new IllegalStateException("스터디장은 스터디룸을 나갈 수 없습니다.");
+        }
+
+        // 스터디 멤버 삭제 (예치금 환불 X)
+        studyMemberRepository.delete(studyMember);
+    }
 }
