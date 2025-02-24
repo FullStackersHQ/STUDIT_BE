@@ -16,4 +16,9 @@ public class StudyRoomRequest {
 
         private List<String> tags;
     }
+
+    @Data
+    public static class NoticeContent {
+        private String content;
+    }
 }
