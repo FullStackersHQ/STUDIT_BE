@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+
 @Service
 public class KakaoTokenService {
     private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
@@ -35,12 +36,17 @@ public class KakaoTokenService {
 
         // HTTP 요청 보내기
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange
-                (TOKEN_URL, HttpMethod.POST, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(TOKEN_URL, HttpMethod.POST, request, String.class);
 
+        
         // 응답 JSON에서 access_token만 추출
-        try {ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             return jsonNode.get("access_token").asText();
         } catch (Exception e) {
-            e.printStackTrace();return null;}}}
+            e.printStackTrace();
+            return null;
+        }
+    }
+}
