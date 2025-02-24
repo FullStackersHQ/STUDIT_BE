@@ -1,11 +1,14 @@
-package com.studit.backend.domain.point;
+package com.studit.backend.domain.point.service;
+import com.studit.backend.domain.point.PointLogType;
+import com.studit.backend.domain.point.dto.PointLogRequest;
+import com.studit.backend.domain.point.entity.PointLog;
+import com.studit.backend.domain.point.repository.PointLogRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

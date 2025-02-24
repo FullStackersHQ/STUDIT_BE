@@ -1,4 +1,6 @@
-package com.studit.backend.domain.point;
+package com.studit.backend.domain.point.repository;
+import com.studit.backend.domain.point.PointLogType;
+import com.studit.backend.domain.point.entity.PointLog;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

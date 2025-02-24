@@ -1,4 +1,6 @@
-package com.studit.backend.domain.point;
+package com.studit.backend.domain.point.entity;
+import com.studit.backend.domain.point.dto.PointLogRequest;
+import com.studit.backend.domain.point.PointLogType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

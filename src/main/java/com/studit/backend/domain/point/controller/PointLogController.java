@@ -1,4 +1,8 @@
-package com.studit.backend.domain.point;
+package com.studit.backend.domain.point.controller;
+import com.studit.backend.domain.point.dto.PointLogRequest;
+import com.studit.backend.domain.point.service.PointLogService;
+import com.studit.backend.domain.point.PointLogType;
+import com.studit.backend.domain.point.entity.PointLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

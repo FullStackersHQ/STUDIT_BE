@@ -1,4 +1,6 @@
-package com.studit.backend.domain.point;
+package com.studit.backend.domain.point.dto;
+import com.studit.backend.domain.point.PointLogType;
+import com.studit.backend.domain.point.entity.PointLog;
 import lombok.*;
 
 @Getter
