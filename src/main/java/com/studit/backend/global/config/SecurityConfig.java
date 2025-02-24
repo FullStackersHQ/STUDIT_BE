@@ -36,17 +36,17 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, authentication) -> {
+                        .successHandler((request, response,
+                                         authentication) -> {
                             response.sendRedirect("/");  // 로그인 후 홈 페이지로 리디렉션
                         })
-                        .failureHandler((request, response, exception) -> {
+                        .failureHandler((request, response,
+                                         exception) -> {
                             response.sendRedirect("/login-fail");  // 로그인 실패 시 리디렉션
                         })
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 적용;
-
+        return http.build();}}
         return http.build();
     }
-
 }
-

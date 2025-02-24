@@ -38,7 +38,7 @@ public class KakaoTokenService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(TOKEN_URL, HttpMethod.POST, request, String.class);
 
-
+        
         // 응답 JSON에서 access_token만 추출
         try {
             ObjectMapper objectMapper = new ObjectMapper();
