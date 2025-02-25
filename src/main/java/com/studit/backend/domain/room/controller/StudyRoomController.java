@@ -90,4 +90,35 @@ public class StudyRoomController {
 
         return ResponseEntity.ok("스터디룸이 삭제되었습니다.");
     }
+
+    // 스터디룸 나가기 (Only 스터디원)
+    @DeleteMapping("/{roomId}/leave")
+    public ResponseEntity<String> leaveRoom(
+            @PathVariable Long roomId,
+            @RequestHeader("Authorization") String token) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
+        studyRoomService.leaveRoom(roomId, userId);
+        return ResponseEntity.ok("스터디룸을 나갔습니다.");
+    }
+
+    // 공지사항 작성 또는 수정 (Only 스터디장)
+    @PostMapping("/{roomId}/notices")
+    public ResponseEntity<String> createOrUpdateNotice(
+            @PathVariable Long roomId,
+            @RequestHeader("Authorization") String token,
+            @RequestBody StudyRoomRequest.NoticeContent request) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
+        studyRoomService.createOrUpdateNotice(roomId, userId, request.getContent());
+        return ResponseEntity.ok("공지사항이 저장되었습니다.");
+    }
+
+    // 공지사항 삭제 (Only 스터디장)
+    @DeleteMapping("/{roomId}/notices")
+    public ResponseEntity<String> deleteNotice(
+            @PathVariable Long roomId,
+            @RequestHeader("Authorization") String token) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
+        studyRoomService.deleteNotice(roomId, userId);
+        return ResponseEntity.ok("공지사항이 삭제되었습니다.");
+    }
 }
