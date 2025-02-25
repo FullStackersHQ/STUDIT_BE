@@ -3,9 +3,12 @@ import com.studit.backend.domain.point.dto.PointLogRequest;
 import com.studit.backend.domain.point.service.PointLogService;
 import com.studit.backend.domain.point.PointLogType;
 import com.studit.backend.domain.point.entity.PointLog;
+import com.studit.backend.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.LogSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -14,9 +17,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PointLogController {//포인트 로그
     private final PointLogService pointLogService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/create")//임시 포인트 로그 생성
-    public ResponseEntity<?> createPointLog(@RequestBody PointLogRequest pointLogRequest) {
+    @PostMapping//임시 포인트 로그 생성
+    public ResponseEntity<?> createPointLog
+            (@RequestHeader("Authroization") String token,
+             @Validated @RequestBody PointLogRequest pointLogRequest) {
+
+        //JWT 에서 userId 추출
+        Long userId=jwtTokenProvider.getUserIdFromToken(token);
+        pointLogRequest.setUserId(userId);
+
         PointLog pointLog = pointLogService.createPointLog(pointLogRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);}
 
@@ -43,8 +54,10 @@ public class PointLogController {//포인트 로그
 
     @PutMapping("/charge/{pointLogId}")//충전
     public ResponseEntity<?> charge(@PathVariable Long pointLogId,
-                                    @RequestBody PointLogRequest pointLogRequest) {
-        PointLog pointLog = pointLogService.charge(pointLogId, pointLogRequest);
+    @RequestHeader("Authorization") String token,
+    @Validated @RequestBody PointLogRequest pointLogRequest) {
+        Long userId=jwtTokenProvider.getUserIdFromToken(token);
+        PointLog pointLog = pointLogService.charge(pointLogId, pointLogRequest, userId);
 
         pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()+pointLogRequest.getChangePoint());
         pointLogRequest.setTotalWithdrawPoint(pointLogRequest
@@ -53,22 +66,28 @@ public class PointLogController {//포인트 로그
 
     @PutMapping("/withdraw/{pointLogId}")//출금
     public ResponseEntity<?> withdraw(@PathVariable Long pointLogId,
-                                      @RequestBody PointLogRequest pointLogRequest) {
-        PointLog pointLog = pointLogService.withdraw(pointLogId, pointLogRequest);
+                                      @RequestHeader("Authorization") String token,
+                                      @Validated @RequestBody PointLogRequest pointLogRequest) {
+        Long userId=jwtTokenProvider.getUserIdFromToken(token);
+        PointLog pointLog = pointLogService.withdraw(pointLogId, pointLogRequest,userId);
         pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()-pointLogRequest.getChangePoint());
         return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);}
 
     @PutMapping("/refund/{pointLogId}")//환불
     public ResponseEntity<?> refund(@PathVariable Long pointLogId,
-                                    @RequestBody PointLogRequest pointLogRequest) {
-        PointLog pointLog = pointLogService.refund(pointLogId, pointLogRequest);
+                                    @RequestHeader("Authorization") String token,
+                                    @Validated @RequestBody PointLogRequest pointLogRequest) {
+        Long userId=jwtTokenProvider.getUserIdFromToken(token);
+        PointLog pointLog = pointLogService.refund(pointLogId, pointLogRequest, userId);
         pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()+pointLogRequest.getChangePoint());
         return ResponseEntity.status(HttpStatus.CREATED).body(pointLog);}
 
     @PutMapping("/deduct/{pointLogId}")//차감
     public ResponseEntity<?> deduct(@PathVariable Long pointLogId,
-                                    @RequestBody PointLogRequest pointLogRequest) {
-        PointLog pointLog = pointLogService.deduct(pointLogId, pointLogRequest);
+                                    @RequestHeader("Authorization") String token,
+                                    @Validated @RequestBody PointLogRequest pointLogRequest) {
+        Long userId=jwtTokenProvider.getUserIdFromToken(token);
+        PointLog pointLog = pointLogService.deduct(pointLogId, pointLogRequest,userId);
 
         pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()-pointLogRequest.getChangePoint());
         pointLogRequest.setTotalDeductPoint(pointLogRequest
@@ -77,8 +96,10 @@ public class PointLogController {//포인트 로그
 
     @PutMapping("/reward/{pointLogId}")//보상
     public ResponseEntity<?> reward(@PathVariable Long pointLogId,
-                                    @RequestBody PointLogRequest pointLogRequest) {
-        PointLog pointLog = pointLogService.reward(pointLogId, pointLogRequest);
+                                    @RequestHeader("Authorization") String token,
+                                    @Validated @RequestBody PointLogRequest pointLogRequest) {
+        Long userId=jwtTokenProvider.getUserIdFromToken(token);
+        PointLog pointLog = pointLogService.reward(pointLogId, pointLogRequest,userId);
 
         pointLogRequest.setTotalPoint(pointLogRequest.getTotalPoint()+pointLogRequest.getChangePoint());
         pointLogRequest.setTotalRewardPoint(pointLogRequest

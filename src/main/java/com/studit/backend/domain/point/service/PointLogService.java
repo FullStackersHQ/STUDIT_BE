@@ -32,7 +32,7 @@ public class PointLogService {//포인트 로그
         if(pointLogType!=null){return pointLogRepository.findByPointLogType(pointLogType);}
         return pointLogRepository.findAll();}//없을 시 모든 결과 조회
 
-    public PointLog charge(Long pointLogId,PointLogRequest pointLogRequest) {//충전
+    public PointLog charge(Long pointLogId,PointLogRequest pointLogRequest, Long userId) {//충전
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
 
@@ -41,7 +41,7 @@ public class PointLogService {//포인트 로그
         saved.changePointForm(pointLogRequest);
         return pointLogRepository.save(saved);}
 
-    public PointLog withdraw(Long pointLogId,PointLogRequest pointLogRequest) {//출금
+    public PointLog withdraw(Long pointLogId,PointLogRequest pointLogRequest, Long userId) {//출금
         //포인트 로그 찾기
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
@@ -57,7 +57,7 @@ public class PointLogService {//포인트 로그
         //포인트 로그 저장
         return pointLogRepository.save(saved);}
 
-    public PointLog refund(Long pointLogId,PointLogRequest pointLogRequest) {//환불
+    public PointLog refund(Long pointLogId,PointLogRequest pointLogRequest, Long userId) {//환불
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
 
@@ -66,7 +66,7 @@ public class PointLogService {//포인트 로그
         saved.changePointForm(pointLogRequest);
         return pointLogRepository.save(saved);}
 
-    public PointLog deduct(Long pointLogId,PointLogRequest pointLogRequest) {//차감
+    public PointLog deduct(Long pointLogId,PointLogRequest pointLogRequest, Long userId) {//차감
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
 
@@ -76,7 +76,7 @@ public class PointLogService {//포인트 로그
         saved.changePointForm(pointLogRequest);
         return pointLogRepository.save(saved);}
 
-    public PointLog reward(Long pointLogId, PointLogRequest pointLogRequest) {
+    public PointLog reward(Long pointLogId, PointLogRequest pointLogRequest, Long userId) {
         PointLog saved=pointLogRepository.findById(pointLogId)
                 .orElseThrow(()->new RuntimeException("포인트 로그 없음"));
 
