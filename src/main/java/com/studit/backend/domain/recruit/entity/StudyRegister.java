@@ -1,4 +1,5 @@
 package com.studit.backend.domain.recruit.entity;
+
 import com.studit.backend.domain.recruit.RegisterStatus;
 import com.studit.backend.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -39,4 +40,6 @@ public class StudyRegister {
     public void prePersist() {
         if (this.registerAt == null) {
             this.registerAt = LocalDateTime.now(); // 현재 시간으로 기본값 설정
-        }}}
+        }
+    }
+}
