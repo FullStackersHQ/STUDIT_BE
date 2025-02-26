@@ -16,7 +16,7 @@ public class PointLog {
     @Id //포인트 로그
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pointLogId; //포인트 로그 ID
-    private Long userId; //회원 ID
+
     private Long roomId; //스터디룸 ID
     private Long paymentId; //결제 ID
 
@@ -31,7 +31,7 @@ public class PointLog {
     private PointLogType pointLogType;//포인트 로그 종류
 
     public void changePointForm(PointLogRequest pointLogRequest) {//포인트 로그 수정 형식
-        this.userId = pointLogRequest.getUserId();
+
         this.roomId = pointLogRequest.getRoomId();
         this.paymentId = pointLogRequest.getPaymentId();
         this.changePoint = pointLogRequest.getChangePoint();

@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 
 public class PointLogRequest {//포인트 로그
-    private Long userId;
+
     private Long roomId;
     private Long paymentId;
 
@@ -23,7 +23,7 @@ public class PointLogRequest {//포인트 로그
     private PointLogType pointLogType;//포인트 로그 종류
 
     public static PointLog pointLogForm(PointLogRequest pointLogRequest){
-        return PointLog.builder().userId(pointLogRequest.getUserId())
+        return PointLog.builder()
                 .roomId(pointLogRequest.getRoomId())
                 .paymentId(pointLogRequest.getPaymentId())
 
