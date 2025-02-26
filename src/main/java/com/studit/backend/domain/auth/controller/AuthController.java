@@ -144,7 +144,7 @@ public class AuthController {
         // RestTemplate을 이용해 GET 요청 보내기
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> restResponse = restTemplate.exchange(logoutUrl, HttpMethod.GET, entity, String.class);
-        
+
         return ResponseEntity.status(restResponse.getStatusCode()).body("카카오 로그아웃 완료");
     }
 
